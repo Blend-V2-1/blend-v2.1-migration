@@ -4,7 +4,7 @@
 	branch = main
 [submodule "comet-contracts-v1.1"]
 	path = comet-contracts-v1.1
-	url = git@github.com:Blend-V2-1/comet-contracts-v1.1.git
+	url = git@github.com:CometDEX/comet-contracts-v1.git
 	branch = main
 [submodule "blend-ui"]
 	path = blend-ui

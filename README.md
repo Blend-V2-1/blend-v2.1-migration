@@ -12,7 +12,7 @@ contracts.
 ## Included repositories
 
 - [`Blend-V2-1/blnt-backfill-contract`](https://github.com/Blend-V2-1/blnt-backfill-contract)
-- [`Blend-V2-1/comet-contracts-v1.1`](https://github.com/Blend-V2-1/comet-contracts-v1.1)
+- [`CometDEX/comet-contracts-v1`](https://github.com/CometDEX/comet-contracts-v1) (upstream `main`, Comet v1.1)
 - [`Blend-V2-1/blend-ui`](https://github.com/Blend-V2-1/blend-ui)
 - [`Blend-V2-1/blend-sdk-js`](https://github.com/Blend-V2-1/blend-sdk-js)
 - [`blend-capital/blend-contracts`](https://github.com/blend-capital/blend-contracts) (upstream `main`, V1 emitter)
