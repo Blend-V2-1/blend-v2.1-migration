@@ -12,7 +12,7 @@
 	branch = main
 [submodule "blend-sdk-js"]
 	path = blend-sdk-js
-	url = git@github.com:Blend-V2-1/blend-sdk-js.git
+	url = git@github.com:blend-capital/blend-sdk-js.git
 	branch = main
 [submodule "blend-contracts-v2"]
 	path = blend-contracts-v2
