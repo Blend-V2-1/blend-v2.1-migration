@@ -30,9 +30,9 @@ The runner MUST NOT deploy or mutate a legacy Blend protocol stack.
 
 The migration repository MUST track V1 and V2 source directly through the
 `blend-capital/blend-contracts` and `blend-capital/blend-contracts-v2`
-submodules. It MUST NOT depend on a V2.1 contract fork. The runner MUST verify
-the committed V1 emitter WASM hash before deployment. It MUST fetch the three
-official V2.0.0 backstop, pool-factory, and pool release WASMs built with
+submodules. The runner MUST verify the committed V1 emitter WASM hash before
+deployment. It MUST fetch the three official V2.0.0 backstop, pool-factory,
+and pool release WASMs built with
 Stellar CLI 22.0.1 and MUST reject any artifact whose SHA-256 differs from the
 fixed expected hash. It MUST NOT rebuild those deployment artifacts locally.
 
@@ -68,8 +68,12 @@ The v2.1 backstop token MUST be an initialized Comet v1.1 LP with:
 - token order `[BLNT, USDC]`;
 - normalized weights `[8,000,000, 2,000,000]`;
 - seven token decimals;
-- exactly 1,000,000 BLNT and 10,000 USDC in custody at initialization;
-- exactly 100 seven-decimal LP shares, transferred from the controller to the
+- exactly 600 BLNT and 6 USDC in custody at initialization, producing exactly
+  100 seven-decimal LP shares;
+- an additional mint of exactly 999,996 BLNT and 9,999.96 USDC, which MUST mint
+  exactly 166,666 additional LP shares and leave the controller with no
+  reserve-asset balance;
+- all 166,766 LP shares MUST be transferred from the controller to the
   deployment operator before the controller is locked;
 - authorized, non-clawbackable SAC custody entries for both reserve assets;
   and
@@ -89,10 +93,10 @@ name is retained only for v2 ABI and storage compatibility.
 The runner MUST deploy a Fixed Pool matching the committed fixture and its
 mainnet Fixed Pool V2 source: reserve order XLM, USDC, EURC; backstop take rate
 2,000,000; maximum positions 6; minimum collateral 50,000,000; and the exact
-committed reserve risk parameters. It MUST deposit all 100 initial Comet LP
-shares into the Fixed Pool backstop, activate the pool, add it to the reward
-zone, configure the mainnet Fixed Pool V2 emission split (20% XLM supply, 40%
-USDC borrow, and 40% EURC borrow), and seed 1,000 USDC of supply.
+committed reserve risk parameters. It MUST deposit all 166,766 Comet LP shares
+into the Fixed Pool backstop, activate the pool, add it to the reward zone,
+configure the mainnet Fixed Pool V2 emission split (20% XLM supply, 40% USDC
+borrow, and 40% EURC borrow), and seed 1,000 USDC of supply.
 
 The Fixed Pool oracle MUST expose seven-decimal fixed prices for XLM, USDC, and
 EURC, accept updates only from the deployment operator, and retain a bounded

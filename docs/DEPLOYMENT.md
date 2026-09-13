@@ -33,11 +33,14 @@ contract requires an explicit review and update of its designated hash.
 
 The runner creates a dedicated BLNT issuer distinct from the deployment
 operator and Comet controller. While that issuer still controls BLNT, it mints
-exactly 125 million BLNT directly to the deployed backfill contract and mints
-the 1 million BLNT portion of the Comet seed. The operator separately issues
-the 10,000 USDC portion. Comet initializes with exactly 100 LP shares, which
-the controller transfers to the operator before its key is locked. The runner
-then deploys an unchanged V1 emitter, immediately invokes
+exactly 125 million BLNT directly to the deployed backfill contract. Comet is
+initialized with 600 BLNT and 6 USDC and exactly 100 LP shares. The runner then
+mints exactly 999,996 BLNT and 9,999.96 USDC and joins them proportionally for
+166,666 additional shares. This preserves the initial LP share price, leaves no
+reserve-token remainder in the controller, and provides enough backstop
+liquidity to activate the Fixed Pool. The controller transfers all 166,766
+shares to the operator and is verified empty before its key is locked. The
+runner then deploys an unchanged V1 emitter, immediately invokes
 its legacy `initialize` entry point, and transfers BLNT administration to it
 only after initialization succeeds. The unchanged V2 backstop is deployed with
 an empty legacy drop list; neither emitter nor backstop `drop` is used for the
@@ -66,7 +69,7 @@ establish its inherited emissions checkpoint.
 The runner deploys seven-decimal USDC and EURC fixtures plus the native XLM
 SAC. It deploys an authenticated SEP-40 oracle with seven observations at
 five-minute resolution and Fixed Pool V2's XLM/USDC/EURC reserve parameters.
-All 100 initial Comet LP shares are deposited into this pool's backstop before
+All 166,766 Comet LP shares are deposited into this pool's backstop before
 activation. The pool is added to the reward zone; emissions are split like
 mainnet Fixed Pool V2 (20% XLM supply, 40% USDC borrow, and 40% EURC borrow);
 and 1,000 USDC is supplied as the initial testnet position.
@@ -144,7 +147,7 @@ Set the issuer home domain during deployment with the same variable used by the
 v3 migration:
 
 ```sh
-BLEND_BLNT_HOME_DOMAIN=blent.trade make testnet-deploy
+BLEND_BLNT_HOME_DOMAIN=blnd.trade make testnet-deploy
 ```
 
 The value MUST be a DNS hostname no longer than Stellar's 32-character account

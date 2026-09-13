@@ -52,9 +52,15 @@ BACKFILL_ALLOCATION=$((74000000 * SCALAR_7))
 GRANT_ALLOCATION=0
 SWAP_CAPACITY=$((51000000 * SCALAR_7))
 BACKFILL_PREMINT=$((125000000 * SCALAR_7))
-COMET_BLNT_BALANCE=$((1000000 * SCALAR_7))
-COMET_USDC_BALANCE=$((10000 * SCALAR_7))
+COMET_BLNT_BALANCE=$((600 * SCALAR_7))
+COMET_USDC_BALANCE=$((6 * SCALAR_7))
 COMET_INITIAL_LP_SUPPLY=$((100 * SCALAR_7))
+COMET_LIQUIDITY_BLNT_FUNDING=$((999996 * SCALAR_7))
+COMET_LIQUIDITY_USDC_FUNDING=$((9999 * SCALAR_7 + 9600000))
+COMET_ADDITIONAL_LP_SUPPLY=$((166666 * SCALAR_7))
+COMET_BACKSTOP_LP_SUPPLY=$((166766 * SCALAR_7))
+COMET_FINAL_BLNT_BALANCE=$((COMET_BLNT_BALANCE + COMET_LIQUIDITY_BLNT_FUNDING))
+COMET_FINAL_USDC_BALANCE=$((COMET_USDC_BALANCE + COMET_LIQUIDITY_USDC_FUNDING))
 COMET_BLNT_WEIGHT=8000000
 COMET_USDC_WEIGHT=2000000
 COMET_SWAP_FEE=30000
@@ -454,6 +460,15 @@ record_deployment_inputs() {
     state_record "contributor_grant_allocation" "${GRANT_ALLOCATION}"
     state_record "conversion_capacity" "${SWAP_CAPACITY}"
     state_record "backfill_premint" "${BACKFILL_PREMINT}"
+    state_record "comet_initial_blnt" "${COMET_BLNT_BALANCE}"
+    state_record "comet_initial_usdc" "${COMET_USDC_BALANCE}"
+    state_record "comet_initial_lp_supply" "${COMET_INITIAL_LP_SUPPLY}"
+    state_record "comet_liquidity_blnt_funding" \
+        "${COMET_LIQUIDITY_BLNT_FUNDING}"
+    state_record "comet_liquidity_usdc_funding" \
+        "${COMET_LIQUIDITY_USDC_FUNDING}"
+    state_record "comet_additional_lp_supply" "${COMET_ADDITIONAL_LP_SUPPLY}"
+    state_record "comet_backstop_lp_supply" "${COMET_BACKSTOP_LP_SUPPLY}"
 }
 
 load_state() {
@@ -723,6 +738,84 @@ fund_testnet_wallet_xlm() {
     state_set "wallet_xlm_funded" "${total}"
 }
 
+verify_comet_controller_empty() {
+    local blnt="$1" usdc="$2" controller="$3"
+    assert_equal "0" "$(normalize_scalar "$(invoke_view \
+        "verify-controller-blnt-empty" "${blnt}" balance \
+        --id "${controller}")")" "controller BLNT balance before lock"
+    assert_equal "0" "$(normalize_scalar "$(invoke_view \
+        "verify-controller-usdc-empty" "${usdc}" balance \
+        --id "${controller}")")" "controller USDC balance before lock"
+}
+
+provision_comet_liquidity() {
+    local comet="$1" blnt="$2" usdc="$3" controller="$4" operator="$5"
+    local controller_lp operator_lp balance
+
+    controller_lp="$(normalize_scalar "$(invoke_view \
+        "query-controller-additional-comet-lp" "${comet}" balance \
+        --id "${controller}")")"
+    operator_lp="$(normalize_scalar "$(invoke_view \
+        "query-operator-comet-lp-before-liquidity" "${comet}" balance \
+        --id "${operator}")")"
+
+    if (( operator_lp == COMET_BACKSTOP_LP_SUPPLY )); then
+        assert_equal "0" "${controller_lp}" "controller Comet LP balance"
+        verify_comet_controller_empty "${blnt}" "${usdc}" "${controller}"
+        state_set "comet_liquidity_joined" "true"
+        state_set "comet_liquidity_transferred" "true"
+        return
+    fi
+    assert_equal "${COMET_INITIAL_LP_SUPPLY}" "${operator_lp}" \
+        "operator Comet LP balance before liquidity provision"
+
+    if (( controller_lp == 0 )); then
+        balance="$(normalize_scalar "$(invoke_view \
+            "query-controller-liquidity-blnt" "${blnt}" balance \
+            --id "${controller}")")"
+        (( balance <= COMET_LIQUIDITY_BLNT_FUNDING )) ||
+            die "controller BLNT exceeds the additional Comet liquidity funding"
+        if (( balance < COMET_LIQUIDITY_BLNT_FUNDING )); then
+            invoke_transaction_as "mint-comet-liquidity-blnt" \
+                "${BLNT_ISSUER_IDENTITY}" "${blnt}" mint \
+                --to "${controller}" \
+                --amount "$((COMET_LIQUIDITY_BLNT_FUNDING - balance))" >/dev/null
+        fi
+        balance="$(normalize_scalar "$(invoke_view \
+            "query-controller-liquidity-usdc" "${usdc}" balance \
+            --id "${controller}")")"
+        (( balance <= COMET_LIQUIDITY_USDC_FUNDING )) ||
+            die "controller USDC exceeds the additional Comet liquidity funding"
+        if (( balance < COMET_LIQUIDITY_USDC_FUNDING )); then
+            invoke_transaction "mint-comet-liquidity-usdc" "${usdc}" mint \
+                --to "${controller}" \
+                --amount "$((COMET_LIQUIDITY_USDC_FUNDING - balance))" >/dev/null
+        fi
+        state_set "comet_liquidity_funded" "true"
+        invoke_transaction_as "join-comet-liquidity" "${CONTROLLER_IDENTITY}" \
+            "${comet}" join_pool \
+            --pool_amount_out "${COMET_ADDITIONAL_LP_SUPPLY}" \
+            --max_amounts_in \
+            "[\"${COMET_LIQUIDITY_BLNT_FUNDING}\",\"${COMET_LIQUIDITY_USDC_FUNDING}\"]" \
+            --user "${controller}" >/dev/null
+        controller_lp="${COMET_ADDITIONAL_LP_SUPPLY}"
+    else
+        assert_equal "${COMET_ADDITIONAL_LP_SUPPLY}" "${controller_lp}" \
+            "existing controller additional Comet LP balance"
+    fi
+    state_set "comet_liquidity_joined" "true"
+    verify_comet_controller_empty "${blnt}" "${usdc}" "${controller}"
+    invoke_transaction_as "transfer-additional-comet-lp" \
+        "${CONTROLLER_IDENTITY}" "${comet}" transfer \
+        --from "${controller}" --to "${operator}" \
+        --amount "${COMET_ADDITIONAL_LP_SUPPLY}" >/dev/null
+    state_set "comet_liquidity_transferred" "true"
+    assert_equal "${COMET_BACKSTOP_LP_SUPPLY}" \
+        "$(normalize_scalar "$(invoke_view \
+            "verify-operator-comet-lp-after-liquidity" "${comet}" balance \
+            --id "${operator}")")" "operator Comet LP balance"
+}
+
 fixture_price_series() {
     local price="$1" now newest
     now="$(date +%s)"
@@ -874,9 +967,9 @@ deploy_fixed_pool() {
             "${backstop}" deposit \
             --from "${operator}" \
             --pool_address "${pool}" \
-            --amount "${COMET_INITIAL_LP_SUPPLY}" >/dev/null
+            --amount "${COMET_BACKSTOP_LP_SUPPLY}" >/dev/null
     else
-        assert_equal "${COMET_INITIAL_LP_SUPPLY}" "${shares}" \
+        assert_equal "${COMET_BACKSTOP_LP_SUPPLY}" "${shares}" \
             "existing Fixed Pool backstop shares"
     fi
     status="$(invoke_view "query-fixed-pool-status-before-activation" \
@@ -950,14 +1043,14 @@ deploy_fixed_pool() {
     shares="$(invoke_view "verify-fixed-pool-backstop-shares" \
         "${backstop}" user_balance --pool "${pool}" --user "${operator}" |
         jq -er '.shares | tostring')"
-    assert_equal "${COMET_INITIAL_LP_SUPPLY}" "${shares}" \
+    assert_equal "${COMET_BACKSTOP_LP_SUPPLY}" "${shares}" \
         "Fixed Pool backstop shares"
     positions="$(invoke_view "verify-fixed-pool-usdc-supply" \
         "${pool}" get_positions --address "${operator}")"
     assert_equal "${FIXED_POOL_USDC_SUPPLY}" \
         "$(printf '%s' "${positions}" | jq -er '(.supply["1"] // "0") | tostring')" \
         "Fixed Pool USDC supply"
-    state_set "fixed_pool_backstop_deposit" "${COMET_INITIAL_LP_SUPPLY}"
+    state_set "fixed_pool_backstop_deposit" "${COMET_BACKSTOP_LP_SUPPLY}"
     state_set "fixed_pool_usdc_supply" "${FIXED_POOL_USDC_SUPPLY}"
     state_set "fixed_pool_emissions" \
         "$(jq -c '.pool.emissions' "${FIXED_POOL_FIXTURE}")"
@@ -1055,7 +1148,7 @@ verify_fixed_pool_deployment() {
     shares="$(invoke_view "query-fixed-pool-backstop-balance" \
         "${backstop}" user_balance --pool "${pool}" --user "${operator}" |
         jq -er '.shares | tostring')"
-    assert_equal "${COMET_INITIAL_LP_SUPPLY}" "${shares}" \
+    assert_equal "${COMET_BACKSTOP_LP_SUPPLY}" "${shares}" \
         "Fixed Pool backstop shares"
     assert_equal "${operator}" "$(normalize_scalar "$(invoke_view \
         "query-fixed-oracle-admin" "${oracle}" admin)")" "Fixed oracle admin"
@@ -1323,9 +1416,9 @@ verify_comet() {
     usdc_balance="$(normalize_scalar "$(invoke_view \
         "query-comet-usdc-balance" "${comet}" get_balance --token "${usdc}")")"
     if [[ "${verify_initial_balances}" == "true" ]]; then
-        assert_equal "${COMET_INITIAL_LP_SUPPLY}" "${total_supply}" "Comet LP supply"
-        assert_equal "${COMET_BLNT_BALANCE}" "${blnt_balance}" "Comet BLNT reserve"
-        assert_equal "${COMET_USDC_BALANCE}" "${usdc_balance}" "Comet USDC reserve"
+        assert_equal "${COMET_BACKSTOP_LP_SUPPLY}" "${total_supply}" "Comet LP supply"
+        assert_equal "${COMET_FINAL_BLNT_BALANCE}" "${blnt_balance}" "Comet BLNT reserve"
+        assert_equal "${COMET_FINAL_USDC_BALANCE}" "${usdc_balance}" "Comet USDC reserve"
     else
         [[ "${total_supply}" =~ ^[1-9][0-9]*$ ]] ||
             die "Comet LP supply is not positive"
@@ -1453,17 +1546,19 @@ Blend v2.1 ${NETWORK_LABEL} deployment
      contributor grants, then premint exactly 125,000,000 BLNT to it while the
      issuer still controls BLNT (74,000,000 claims + 0 grants + 51,000,000
      conversion reserve).
-  4. Premint 1,000,000 BLNT and 10,000 USDC into one seven-decimal 80:20
-     BLNT:USDC Comet v1.1 LP, transfer its 100 LP shares to the operator, then
-     permanently lock its controller account.
+  4. Initialize one seven-decimal 80:20 BLNT:USDC Comet v1.1 LP with 600 BLNT
+     and 6 USDC, establishing 100 LP shares at the intended initial price.
+     Mint exactly 999,996 BLNT and 9,999.96 USDC to join proportionally for
+     166,666 more shares without changing that price, transfer all 166,766
+     shares to the operator, then permanently lock its empty controller account.
   5. Predict the backstop address, bind the upstream V2 factory and unchanged V1
      emitter to it, immediately invoke its legacy initialization entry point,
      and transfer BLNT administration to it.
   6. Deploy the unchanged backstop with an empty legacy drop list and initialize
      its emissions checkpoint. Deploy an authenticated test-only SEP-40 oracle
-     and a Fixed Pool modeled on mainnet Fixed Pool V2, deposit all 100 LP shares,
-     activate it, add it to the reward zone, mirror the mainnet emission split,
-     and seed 1,000 USDC of supply.
+     and a Fixed Pool modeled on mainnet Fixed Pool V2, deposit all 166,766 LP
+     shares, activate it, add it to the reward zone, mirror the mainnet emission
+     split, and seed 1,000 USDC of supply.
   7. On testnet, send 1,000,000 each of new BLNT, USDC, and EURC plus exactly
      100,000 native XLM to ${FUNDING_WALLET}.
   8. Irreversibly lock the BLNT issuer at mainnet BLND's 88/88/88 thresholds,
@@ -1603,6 +1698,8 @@ command_deploy() {
         --from "${controller}" --to "${operator}" \
         --amount "${COMET_INITIAL_LP_SUPPLY}" >/dev/null
     state_set "comet_lp_transferred" "true"
+    provision_comet_liquidity \
+        "${comet}" "${blnt}" "${usdc}" "${controller}" "${operator}"
     capture "lock-comet-controller" stellar_cli tx new set-options \
         --source-account "${CONTROLLER_IDENTITY}" \
         --low-threshold "${COMET_CONTROLLER_THRESHOLD}" \
@@ -1859,6 +1956,8 @@ command_resume() {
         fi
         state_set "comet_lp_transferred" "true"
     fi
+    provision_comet_liquidity \
+        "${comet}" "${blnt}" "${usdc}" "${controller}" "${operator}"
     if [[ "$(state_optional comet_controller_locked)" != "true" ]]; then
         capture "lock-comet-controller" stellar_cli tx new set-options \
             --source-account "${CONTROLLER_IDENTITY}" \
