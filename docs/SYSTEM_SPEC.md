@@ -91,7 +91,8 @@ mainnet Fixed Pool V2 source: reserve order XLM, USDC, EURC; backstop take rate
 2,000,000; maximum positions 6; minimum collateral 50,000,000; and the exact
 committed reserve risk parameters. It MUST deposit all 100 initial Comet LP
 shares into the Fixed Pool backstop, activate the pool, add it to the reward
-zone, configure emissions for USDC supply, and seed 1,000 USDC of supply.
+zone, configure the mainnet Fixed Pool V2 emission split (20% XLM supply, 40%
+USDC borrow, and 40% EURC borrow), and seed 1,000 USDC of supply.
 
 The Fixed Pool oracle MUST expose seven-decimal fixed prices for XLM, USDC, and
 EURC, accept updates only from the deployment operator, and retain a bounded

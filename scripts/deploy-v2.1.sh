@@ -94,7 +94,7 @@ ORACLE_DIR="${ROOT_DIR}/test-sep40-oracle"
 ORACLE_WASM="${ORACLE_DIR}/target/wasm32v1-none/optimized/blend_v21_test_sep40_oracle.wasm"
 ORACLE_WASM_SHA256="d60558a660250bc6c1dc318c0e0f4e0d1ec42ab84341c92d465a0bb378daf262"
 FIXED_POOL_FIXTURE="${ROOT_DIR}/fixtures/fixed-pool-v2.json"
-FIXED_POOL_FIXTURE_SHA256="942c2d8d04ccf52b72191e238a2ffdb01db0a41c26200a323c8a7fb0bf5dff6d"
+FIXED_POOL_FIXTURE_SHA256="39892a921f997390b7b401b3ba5686bb4e1ce982312869154bc11ab02cb7fd28"
 BACKFILL_MANIFEST="${BACKFILL_DIR}/allocations/comet_cpal_backfill.json"
 BACKFILL_SOURCE_SHA256="30fbbb6c62c8812a94cfb02f1c9d528235a28dcddfb45fa7f5535e39fd9a4cd3"
 CLAIM_LIST=""
@@ -256,7 +256,11 @@ validate_fixed_pool_fixture() {
       .pool.min_collateral == 50000000 and
       ([.pool.reserves[].asset] == ["XLM", "USDC", "EURC"]) and
       (.pool.reserves | length == 3) and
-      .pool.emissions == [{res_index: 1, res_type: 1, share: 1}]
+      .pool.emissions == [
+        {res_index: 0, res_type: 1, share: 2000000},
+        {res_index: 1, res_type: 0, share: 4000000},
+        {res_index: 2, res_type: 0, share: 4000000}
+      ]
     ' "${FIXED_POOL_FIXTURE}" >/dev/null ||
         die "Fixed Pool V2 fixture failed invariant validation"
 }
@@ -989,7 +993,7 @@ fund_testnet_wallet_assets() {
 
 verify_fixed_pool_deployment() {
     local operator factory backstop oracle pool xlm usdc eurc config reserves reward shares
-    local asset token expected reserve prices index=0
+    local asset token expected reserve prices emissions_raw emissions_actual emissions_expected index=0
     operator="$(state_value operator)"
     factory="$(state_value pool_factory)"
     backstop="$(state_value backstop)"
@@ -1030,6 +1034,21 @@ verify_fixed_pool_deployment() {
             die "Fixed Pool ${asset} reserve configuration differs from fixture"
         index=$((index + 1))
     done
+    emissions_raw="$(capture "query-fixed-pool-emissions" stellar_cli contract read \
+        --id "${pool}" --key PoolEmis --durability persistent --output string \
+        --rpc-url "${RPC_URL}" --network-passphrase "${NETWORK_PASSPHRASE}")"
+    emissions_actual="${emissions_raw#*,\"}"
+    emissions_actual="${emissions_actual%\",*}"
+    emissions_actual="${emissions_actual//\"\"/\"}"
+    emissions_actual="$(printf '%s' "${emissions_actual}" | jq -cS .)" ||
+        die "unable to parse Fixed Pool emissions"
+    emissions_expected="$(jq -cS '
+      .pool.emissions |
+      map({key: ((.res_index * 2 + .res_type) | tostring), value: .share}) |
+      from_entries
+    ' "${FIXED_POOL_FIXTURE}")"
+    assert_equal "${emissions_expected}" "${emissions_actual}" \
+        "Fixed Pool emission allocations"
     reward="$(invoke_view "query-fixed-pool-reward-zone" "${backstop}" reward_zone)"
     printf '%s' "${reward}" | jq -e --arg pool "${pool}" \
         'index($pool) != null' >/dev/null || die "Fixed Pool is absent from reward zone"
@@ -1443,7 +1462,7 @@ Blend v2.1 ${NETWORK_LABEL} deployment
   6. Deploy the unchanged backstop with an empty legacy drop list and initialize
      its emissions checkpoint. Deploy an authenticated test-only SEP-40 oracle
      and a Fixed Pool modeled on mainnet Fixed Pool V2, deposit all 100 LP shares,
-     activate it, add it to the reward zone, configure USDC-supply emissions,
+     activate it, add it to the reward zone, mirror the mainnet emission split,
      and seed 1,000 USDC of supply.
   7. On testnet, send 1,000,000 each of new BLNT, USDC, and EURC plus exactly
      100,000 native XLM to ${FUNDING_WALLET}.

@@ -67,8 +67,9 @@ The runner deploys seven-decimal USDC and EURC fixtures plus the native XLM
 SAC. It deploys an authenticated SEP-40 oracle with seven observations at
 five-minute resolution and Fixed Pool V2's XLM/USDC/EURC reserve parameters.
 All 100 initial Comet LP shares are deposited into this pool's backstop before
-activation. The pool is added to the reward zone, USDC-supply emissions are
-configured, and 1,000 USDC is supplied so emissions have a live recipient.
+activation. The pool is added to the reward zone; emissions are split like
+mainnet Fixed Pool V2 (20% XLM supply, 40% USDC borrow, and 40% EURC borrow);
+and 1,000 USDC is supplied as the initial testnet position.
 
 On public testnet the configured wallet receives exactly 1,000,000 new BLNT,
 1,000,000 fixture USDC, 1,000,000 fixture EURC, and 100,000 native XLM. Because
