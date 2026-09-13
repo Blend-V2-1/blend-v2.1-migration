@@ -9,6 +9,12 @@ configured for BLNT, the zero-grant 125 million BLNT backfill allocation, an
 BLND after SAC administration moves to the emitter, and the Blend v2.1 protocol
 contracts.
 
+The testnet lane also deploys a controlled mock SEP-40 oracle and a Fixed Pool
+modeled on Fixed Pool V2, funds its backstop with the initial Comet LP supply,
+and includes an hourly emissions keeper. The configured test wallet receives
+1,000,000 each of the newly issued BLNT, USDC, and EURC assets plus 100,000
+native XLM.
+
 ## Included repositories
 
 - [`Blend-V2-1/blnt-backfill-contract`](https://github.com/Blend-V2-1/blnt-backfill-contract)
@@ -41,13 +47,21 @@ git submodule update --remote --recursive
 Backfill and Comet retain their pinned build toolchains. The three unchanged V2
 contracts are fetched from their official V2.0.0 GitHub releases and accepted
 only after fixed SHA-256 verification. The V1 emitter is deployed from the
-immutable WASM committed in `blend-contracts`. Locally built backfill and Comet
-WASMs must also match their designated hashes before deployment:
+immutable WASM committed in `blend-contracts`. Locally built backfill, Comet,
+and test-oracle WASMs must also match their designated hashes before deployment:
 
 ```sh
 make build
 make localnet-plan
 make testnet-plan
+```
+
+After a verified testnet deployment, run one keeper pass or the scheduled
+loop with:
+
+```sh
+make testnet-keeper-once
+make testnet-keeper
 ```
 
 Optionally set the dedicated BLNT issuer's metadata domain before its key is

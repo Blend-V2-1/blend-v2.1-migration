@@ -13,6 +13,9 @@ the v3 migration runner while keeping each repository's pinned build lane.
   only when running the upstream V2 source tests through `make test`.
 - `blnt-backfill-contract`: its pinned Rust 1.91.1 / SDK 27 toolchain.
 - `comet-contracts-v1.1`: its pinned Rust 1.92.0 / SDK 25 toolchain.
+- `test-sep40-oracle`: its pinned Rust 1.91.1 / SDK 27 toolchain. This
+  authenticated fixed-price oracle is a test fixture and MUST NOT be used on
+  mainnet.
 - deployment and verification: Stellar CLI major version 27.
 
 Verified V2 artifacts are cached below ignored `.artifacts/`. A valid cached
@@ -31,8 +34,10 @@ contract requires an explicit review and update of its designated hash.
 The runner creates a dedicated BLNT issuer distinct from the deployment
 operator and Comet controller. While that issuer still controls BLNT, it mints
 exactly 125 million BLNT directly to the deployed backfill contract and mints
-the BLNT portion of the Comet seed. The operator separately issues the USDC
-fixture. The runner then deploys an unchanged V1 emitter, immediately invokes
+the 1 million BLNT portion of the Comet seed. The operator separately issues
+the 10,000 USDC portion. Comet initializes with exactly 100 LP shares, which
+the controller transfers to the operator before its key is locked. The runner
+then deploys an unchanged V1 emitter, immediately invokes
 its legacy `initialize` entry point, and transfers BLNT administration to it
 only after initialization succeeds. The unchanged V2 backstop is deployed with
 an empty legacy drop list; neither emitter nor backstop `drop` is used for the
@@ -58,6 +63,20 @@ For ongoing operation, invoke `emitter.distribute` before
 `backstop.distribute`. The deployment runner makes one initial backstop call to
 establish its inherited emissions checkpoint.
 
+The runner deploys seven-decimal USDC and EURC fixtures plus the native XLM
+SAC. It deploys an authenticated SEP-40 oracle with seven observations at
+five-minute resolution and Fixed Pool V2's XLM/USDC/EURC reserve parameters.
+All 100 initial Comet LP shares are deposited into this pool's backstop before
+activation. The pool is added to the reward zone, USDC-supply emissions are
+configured, and 1,000 USDC is supplied so emissions have a live recipient.
+
+On public testnet the configured wallet receives exactly 1,000,000 new BLNT,
+1,000,000 fixture USDC, 1,000,000 fixture EURC, and 100,000 native XLM. Because
+issued assets require classic trustlines for G-account recipients, the runner
+requires a local wallet identity whose public key exactly matches
+`BLEND_V21_FUNDING_WALLET`; the config directory and identity can be overridden
+with `BLEND_V21_WALLET_CONFIG_DIR` and `BLEND_V21_WALLET_IDENTITY`.
+
 ## Localnet
 
 ```sh
@@ -78,7 +97,11 @@ make testnet-plan
 make testnet-validate
 make testnet-start
 make testnet-deploy
+make testnet-resume
 make testnet-status
+make testnet-keeper-plan
+make testnet-keeper-once
+make testnet-keeper
 ```
 
 `testnet-start` only checks network health. `testnet-deploy` is the first
@@ -90,6 +113,23 @@ with the explicit `BLEND_V21_EXTERNAL_BLND` environment variable.
 Generated identities, state, transaction output, and cost logs are retained in
 `.localnet/` or `.testnet/` and are intentionally ignored by Git. A second
 deployment is rejected while the matching `state.json` exists.
+If a one-time deployment is interrupted after state creation, `testnet-resume`
+reconstructs deterministic asset addresses, verifies completed on-chain
+checkpoints, and continues without reminting wallet assets or repeating XLM
+payments.
+
+`status` continues to verify immutable token, authority, allocation, reserve,
+oracle, and reward-zone bindings after activation. Initial funding is checked
+exactly during deployment; subsequent status checks allow the Comet reserves,
+backfill custody, and conversion capacity to decrease or rebalance through
+normal protocol use.
+
+The keeper verifies the saved emitter/backstop and Fixed Pool reward-zone
+bindings before work. Each pass calls `emitter.distribute`, then
+`backstop.distribute`, then `pool.gulp_emissions`; known timing/no-work errors
+are safe no-ops. It refreshes the Fixed Pool oracle before those calls on every
+pass; a failed refresh aborts emissions processing for that pass. Its default
+pass interval is one hour.
 
 Override the dedicated issuer identity name with
 `BLEND_V21_BLNT_ISSUER_IDENTITY` when required. The supplied identity MUST be a

@@ -17,9 +17,12 @@ Stellar public testnet. The stack consists of:
 - a seven-decimal BLNT Stellar Asset Contract created from a dedicated classic
   issuer, administered by the emitter, and backed by an irreversibly locked
   issuer account;
-- a seven-decimal USDC fixture Stellar Asset Contract; and
+- seven-decimal USDC and EURC fixture Stellar Asset Contracts;
+- the native XLM Stellar Asset Contract;
 - one Comet v1.1 pool containing exactly BLNT and USDC at normalized 80:20
-  weights.
+  weights;
+- an authenticated, test-only SEP-40 oracle; and
+- an XLM/USDC/EURC Fixed Pool modeled on mainnet Fixed Pool V2.
 
 Public-testnet BLND-to-BLNT conversion MUST bind the existing legacy BLND
 Stellar Asset Contract. Localnet MAY deploy an isolated legacy BLND fixture.
@@ -36,7 +39,7 @@ fixed expected hash. It MUST NOT rebuild those deployment artifacts locally.
 Localnet and public-testnet deployments MAY execute from a modified migration
 repository worktree so runner changes can be exercised before commit. Worktree
 cleanliness is therefore not a deployment precondition. Regardless of source
-state, the runner MUST reject any backfill or Comet build whose SHA-256 differs
+state, the runner MUST reject any backfill, Comet, or test-oracle build whose SHA-256 differs
 from its designated hash, just as it rejects mismatched V1 emitter and official
 V2 release WASMs. No contract WASM with an undesignated hash may be deployed.
 
@@ -65,7 +68,9 @@ The v2.1 backstop token MUST be an initialized Comet v1.1 LP with:
 - token order `[BLNT, USDC]`;
 - normalized weights `[8,000,000, 2,000,000]`;
 - seven token decimals;
-- positive total LP supply and positive custody of both reserve assets;
+- exactly 1,000,000 BLNT and 10,000 USDC in custody at initialization;
+- exactly 100 seven-decimal LP shares, transferred from the controller to the
+  deployment operator before the controller is locked;
 - authorized, non-clawbackable SAC custody entries for both reserve assets;
   and
 - a controller account irreversibly locked at thresholds 100/100/100 with
@@ -78,6 +83,25 @@ BLNT or USDC custody entry held by the LP.
 
 The backstop's legacy-named `blnd_token` constructor field MUST bind BLNT. That
 name is retained only for v2 ABI and storage compatibility.
+
+## Fixed Pool and testnet wallet
+
+The runner MUST deploy a Fixed Pool matching the committed fixture and its
+mainnet Fixed Pool V2 source: reserve order XLM, USDC, EURC; backstop take rate
+2,000,000; maximum positions 6; minimum collateral 50,000,000; and the exact
+committed reserve risk parameters. It MUST deposit all 100 initial Comet LP
+shares into the Fixed Pool backstop, activate the pool, add it to the reward
+zone, configure emissions for USDC supply, and seed 1,000 USDC of supply.
+
+The Fixed Pool oracle MUST expose seven-decimal fixed prices for XLM, USDC, and
+EURC, accept updates only from the deployment operator, and retain a bounded
+seven-record history at 300-second resolution. It is a test fixture and MUST
+NOT be presented as a production oracle.
+
+On public testnet, the runner MUST send exactly 1,000,000 each of the new BLNT,
+USDC, and EURC assets and exactly 100,000 native XLM to the configured funding
+wallet. It MUST authenticate that wallet to create the three required classic
+trustlines before minting the issued assets.
 
 ## Ordering and authority
 
@@ -108,6 +132,12 @@ therefore invoke `emitter.distribute` before `backstop.distribute`. Immediately
 after backstop deployment, the runner MUST call `backstop.distribute` once to
 initialize its inherited emissions checkpoint.
 
+An operational keeper MUST verify the emitter recipient and Fixed Pool
+reward-zone membership before each run. It MUST call `emitter.distribute`,
+`backstop.distribute`, and Fixed Pool `gulp_emissions` in that order. It SHOULD
+run hourly and MUST refresh the controlled Fixed Pool oracle before processing
+emissions on every pass.
+
 ## Evidence and safety
 
 Every transaction and read-only verification MUST be written to the ignored,
@@ -118,6 +148,11 @@ identity, the dedicated BLNT issuer and lock threshold, its configured home
 domain, contract IDs, allocation totals, and the final verification phase.
 
 The `plan`, `validate`, and `status` commands MUST NOT submit transactions.
+An interrupted deployment MAY be continued with `resume`, which MUST verify
+recorded checkpoints before skipping them and MUST NOT repeat completed wallet
+funding.
+Post-deployment `status` verification MUST distinguish immutable configuration
+from balances and capacities that legitimately change through swaps and claims.
 The public-testnet lane MUST use separate ignored signing configuration and
 MUST require an explicit `deploy` or `run` command before it submits any
 transaction.

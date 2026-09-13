@@ -1,0 +1,71 @@
+{
+  "source": {
+    "captured_at": "2026-07-27",
+    "mainnet_pool": "CAJJZSGMMM3PD7N33TAPHGBUGTB43OC73HVIK2L2G6BNGGGYOSSYBXBD"
+  },
+  "prices": {
+    "XLM": 2500000,
+    "USDC": 10000000,
+    "EURC": 10000000
+  },
+  "pool": {
+    "name": "Fixed",
+    "backstop_take_rate": 2000000,
+    "max_positions": 6,
+    "min_collateral": 50000000,
+    "reserves": [
+      {
+        "asset": "XLM",
+        "config": {
+          "c_factor": 7500000,
+          "l_factor": 7500000,
+          "max_util": 7000000,
+          "r_base": 100000,
+          "r_one": 300000,
+          "r_three": 50000000,
+          "r_two": 3000000,
+          "reactivity": 50,
+          "supply_cap": "100000000000000000",
+          "util": 4000000
+        }
+      },
+      {
+        "asset": "USDC",
+        "config": {
+          "c_factor": 9500000,
+          "l_factor": 9500000,
+          "max_util": 9000000,
+          "r_base": 300000,
+          "r_one": 400000,
+          "r_three": 50000000,
+          "r_two": 1200000,
+          "reactivity": 20,
+          "supply_cap": "10000000000000000",
+          "util": 8000000
+        }
+      },
+      {
+        "asset": "EURC",
+        "config": {
+          "c_factor": 9500000,
+          "l_factor": 9500000,
+          "max_util": 9000000,
+          "r_base": 300000,
+          "r_one": 400000,
+          "r_three": 50000000,
+          "r_two": 1200000,
+          "reactivity": 20,
+          "supply_cap": "10000000000000000",
+          "util": 8000000
+        }
+      }
+    ],
+    "emissions": [
+      {
+        "res_index": 1,
+        "res_type": 1,
+        "share": 1
+      }
+    ]
+  }
+}
