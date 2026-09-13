@@ -6,11 +6,11 @@ It also contains the reproducible localnet and public-testnet deployment runner
 for the v2.1 launch topology: a new instance of the unchanged V1 emitter
 configured for BLNT, the zero-grant 125 million BLNT backfill allocation, an
 80:20 BLNT:USDC Comet v1.1 LP, a dedicated BLNT issuer locked to match mainnet
-BLND after SAC administration moves to the emitter, and the Blend v2.1 protocol
-contracts.
+BLND after SAC administration moves to the emitter, and the unchanged upstream
+V2 protocol contracts.
 
 The testnet lane also deploys a controlled mock SEP-40 oracle and a Fixed Pool
-modeled on Fixed Pool V2, funds its backstop with the initial Comet LP supply,
+modeled on Fixed Pool V2, funds its backstop with all 166,766 Comet LP shares,
 and includes an hourly emissions keeper. The configured test wallet receives
 1,000,000 each of the newly issued BLNT, USDC, and EURC assets plus 100,000
 native XLM.
@@ -20,7 +20,7 @@ native XLM.
 - [`Blend-V2-1/blnt-backfill-contract`](https://github.com/Blend-V2-1/blnt-backfill-contract)
 - [`CometDEX/comet-contracts-v1`](https://github.com/CometDEX/comet-contracts-v1) (upstream `main`, Comet v1.1)
 - [`Blend-V2-1/blend-ui`](https://github.com/Blend-V2-1/blend-ui)
-- [`Blend-V2-1/blend-sdk-js`](https://github.com/Blend-V2-1/blend-sdk-js)
+- [`blend-capital/blend-sdk-js`](https://github.com/blend-capital/blend-sdk-js) (upstream `main`)
 - [`blend-capital/blend-contracts`](https://github.com/blend-capital/blend-contracts) (upstream `main`, V1 emitter)
 - [`blend-capital/blend-contracts-v2`](https://github.com/blend-capital/blend-contracts-v2) (upstream `main`)
 
@@ -36,11 +36,10 @@ For an existing checkout:
 git submodule update --init --recursive
 ```
 
-To update every submodule to the latest commit on its configured `main` branch:
-
-```sh
-git submodule update --remote --recursive
-```
+Submodule commits are intentionally pinned for reproducibility. Do not use
+`git submodule update --remote` in a deployment checkout. Advancing a gitlink
+is a maintainer operation that requires reviewing the new source and any
+affected designated WASM hashes.
 
 ## Build and deployment
 
@@ -68,7 +67,7 @@ Optionally set the dedicated BLNT issuer's metadata domain before its key is
 permanently locked:
 
 ```sh
-BLEND_BLNT_HOME_DOMAIN=blent.trade make testnet-deploy
+BLEND_BLNT_HOME_DOMAIN=blnd.trade make testnet-deploy
 ```
 
 See [the system specification](docs/SYSTEM_SPEC.md) and
