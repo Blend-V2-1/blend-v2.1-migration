@@ -48,8 +48,8 @@ EXTERNAL_TESTNET_WBTC="${BLEND_V21_EXTERNAL_TESTNET_WBTC:-CAP5AMC2OHNVREO66DFIN6
 EXTERNAL_TESTNET_ORACLE="${BLEND_V21_EXTERNAL_TESTNET_ORACLE:-CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI}"
 EXTERNAL_TESTNET_V2_POOL="${BLEND_V21_EXTERNAL_TESTNET_V2_POOL:-CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF}"
 FUNDING_WALLET="${BLEND_V21_FUNDING_WALLET:-GDPAIYJ2FISB5H7JNWDNRERAIMGZSP4HVQKYMKO42KRB23GANJXNG2ZI}"
-WALLET_CONFIG_DIR="${BLEND_V21_WALLET_CONFIG_DIR:-${ROOT_DIR}/../blnt-v3-migration/.testnet-production/stellar-config}"
-WALLET_IDENTITY="${BLEND_V21_WALLET_IDENTITY:-blend-v3-ui-testnet-wallet}"
+WALLET_CONFIG_DIR="${BLEND_V21_WALLET_CONFIG_DIR:-}"
+WALLET_IDENTITY="${BLEND_V21_WALLET_IDENTITY:-}"
 BLND_SOURCE_CONFIG_DIR="${BLEND_V21_BLND_SOURCE_CONFIG_DIR:-${WALLET_CONFIG_DIR}}"
 BLND_SOURCE_IDENTITY="${BLEND_V21_BLND_SOURCE_IDENTITY:-${WALLET_IDENTITY}}"
 
@@ -112,9 +112,10 @@ Commands:
 
 Set BLEND_V21_NETWORK=testnet for public testnet. Public state, signing keys,
 transaction output, and cost logs remain in the ignored network work directory.
-Testnet deployment reuses the existing BLND asset and emitter. Configure an
-identity holding enough BLND with BLEND_V21_BLND_SOURCE_CONFIG_DIR and
-BLEND_V21_BLND_SOURCE_IDENTITY.
+Testnet deployment reuses the existing BLND asset and emitter. Set
+BLEND_V21_WALLET_CONFIG_DIR and BLEND_V21_WALLET_IDENTITY to the funding-wallet
+signer. Set the BLEND_V21_BLND_SOURCE_* overrides only when another signer
+supplies BLND.
 EOF
 }
 
@@ -564,6 +565,10 @@ blnd_source_stellar_cli() {
 require_blnd_source_access() {
     local expected="$1" configured
     [[ "${NETWORK_MODE}" == "testnet" ]] || return 0
+    [[ -n "${BLND_SOURCE_CONFIG_DIR}" ]] ||
+        die "BLEND_V21_BLND_SOURCE_CONFIG_DIR or BLEND_V21_WALLET_CONFIG_DIR is required on public testnet"
+    [[ -n "${BLND_SOURCE_IDENTITY}" ]] ||
+        die "BLEND_V21_BLND_SOURCE_IDENTITY or BLEND_V21_WALLET_IDENTITY is required on public testnet"
     [[ -d "${BLND_SOURCE_CONFIG_DIR}" ]] ||
         die "BLND source Stellar config directory not found: ${BLND_SOURCE_CONFIG_DIR}"
     configured="$(blnd_source_stellar_cli keys public-key "${BLND_SOURCE_IDENTITY}")" ||
@@ -601,6 +606,10 @@ fund_controller_blnd() {
 require_funding_wallet_access() {
     local configured_wallet
     [[ "${NETWORK_MODE}" == "testnet" ]] || return 0
+    [[ -n "${WALLET_CONFIG_DIR}" ]] ||
+        die "BLEND_V21_WALLET_CONFIG_DIR is required on public testnet"
+    [[ -n "${WALLET_IDENTITY}" ]] ||
+        die "BLEND_V21_WALLET_IDENTITY is required on public testnet"
     [[ -d "${WALLET_CONFIG_DIR}" ]] ||
         die "wallet Stellar config directory not found: ${WALLET_CONFIG_DIR}"
     configured_wallet="$(wallet_stellar_cli keys public-key "${WALLET_IDENTITY}")" ||
@@ -1319,9 +1328,15 @@ command_deploy() {
     local emitter initial_backstop comet pool_hash backstop factory deployed_backstop
 
     validate_build_tools
-    require_network
     [[ ! -e "${STATE_FILE}" ]] ||
         die "state already exists at ${STATE_FILE}; refusing to overwrite it"
+    if [[ "${NETWORK_MODE}" == "testnet" ]]; then
+        require_funding_wallet_access
+        blnd_source="$(blnd_source_stellar_cli keys public-key "${BLND_SOURCE_IDENTITY}")" ||
+            die "BLND source identity is unavailable: ${BLND_SOURCE_IDENTITY}"
+        require_blnd_source_access "${blnd_source}"
+    fi
+    require_network
     if [[ "${skip_build}" != "true" ]]; then
         build_artifacts
     fi
@@ -1351,10 +1366,6 @@ command_deploy() {
         blnd="${EXTERNAL_BLND}"
         blnd_issuer="${EXTERNAL_BLND_ISSUER}"
         require_existing_blnd "${blnd}" "${blnd_issuer}"
-        blnd_source="$(blnd_source_stellar_cli keys public-key "${BLND_SOURCE_IDENTITY}")" ||
-            die "BLND source identity is unavailable: ${BLND_SOURCE_IDENTITY}"
-        require_blnd_source_access "${blnd_source}"
-        require_funding_wallet_access
         usdc="${EXTERNAL_TESTNET_USDC}"
         usdc_issuer="${EXTERNAL_TESTNET_USDC_ISSUER}"
         weth="${EXTERNAL_TESTNET_WETH}"

@@ -8,7 +8,7 @@ Blend V2.1 Proposal — Restore Blend with Comet V1.1 while retaining BLND
 
 Before Blend moves to V3, the immediate problem created by the Comet V1 incident should be addressed. The impaired BLND:USDC LP has left the current backstop unusable and made the normal emitter-upgrade path difficult to exercise. Blend V2.1 is a minimal recovery deployment that restores a healthy backstop without changing the already audited Blend V2 contracts or V1 emitter.
 
-V2.1 would deploy fresh instances of the exact unchanged Blend V2.0.0 backstop, pool-factory, and pool WASMs. It would continue using the existing BLND token and existing V1 emitter and would introduce a corrected seven-decimal 80:20 BLND:USDC Comet V1.1 LP as the new backstop asset. V2.1 would not create BLNT, deploy a token backfill, provide BLND-holder conversion, or address USDC remediation.
+V2.1 would deploy fresh instances of the exact unchanged Blend V2.0.0 backstop, pool-factory, and pool WASMs. It would continue using the existing BLND token and existing V1 emitter and would introduce a corrected seven-decimal 80:20 BLND:USDC Comet V1.1 LP as the new backstop asset. V2.1 would not deploy an incident-remediation token backfill, provide token-holder conversion, or address USDC remediation.
 
 ## Why V2.1 first
 

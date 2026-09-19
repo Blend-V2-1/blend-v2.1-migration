@@ -13,7 +13,7 @@ This repository MUST deploy and verify a fresh Blend V2.1 stack on localnet or S
 - the existing SEP-40 oracle used by the public-testnet TestnetV2 pool; and
 - one XLM/wETH/wBTC/USDC pool named `TestnetV2.1`, modeled on the TestnetV2 pool displayed by testnet.blend.capital.
 
-The deployment MUST NOT create BLNT, deploy a backfill contract, allocate replacement tokens, configure a BLND-to-BLNT conversion, deploy a replacement public-testnet emitter, or mutate the existing Blend V1/V2 stack.
+The deployment MUST NOT create a replacement emissions asset, deploy an incident-remediation backfill contract, allocate replacement tokens, configure a token conversion, deploy a replacement public-testnet emitter, or mutate the existing Blend V1/V2 stack.
 
 Localnet MAY deploy an isolated BLND and V1-emitter fixture so the public-testnet topology can be exercised without external state. That emitter MUST initially target a distinct legacy fixture address rather than the V2.1 backstop.
 
@@ -83,4 +83,6 @@ Finalization MUST be safe to retry after any submitted transaction and MUST NOT 
 
 Every transaction and read-only verification MUST be written to the ignored network-specific run directory. Deployment MUST refuse to overwrite an existing state file. The saved state MUST include source checkout commits, authoritative release tags and hashes, network identity, existing BLND and emitter bindings, the BLND liquidity source, contract IDs, Comet funding, emission-activation state, and the final verification phase.
 
-The `plan`, `validate`, and `status` commands MUST NOT submit transactions. Old BLNT-era state files MUST NOT be resumed as V2.1 BLND deployments. A new deployment MUST use a fresh state file.
+Public-testnet deployment MUST require explicit funding-wallet signer configuration. Before generating deployment identities, requesting account funding, creating deployment state, or submitting transactions, the runner MUST verify that the configured wallet identity resolves to the expected funding-wallet address and that the configured BLND source identity is available. A separate BLND source MAY be configured; otherwise it MUST inherit the funding-wallet signer configuration.
+
+The `plan`, `validate`, and `status` commands MUST NOT submit transactions. State files from incompatible earlier deployment topologies MUST NOT be resumed as V2.1 deployments. A new deployment MUST use a fresh state file.

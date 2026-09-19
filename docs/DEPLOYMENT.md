@@ -20,15 +20,15 @@ Public testnet reuses the existing BLND Stellar Asset Contract. The runner verif
 
 The new Comet pool is initialized with 600 BLND and 6 of TestnetV2's existing USDC for exactly 100 LP shares. The controller transfers all 100 shares to the configured funding wallet and is verified empty before its key is permanently locked. The deployment does not deposit those shares into the Blend backstop; the user funds the backstop separately.
 
-On public testnet, the runner cannot mint BLND. Configure an existing BLND holder that can authenticate the required transfers:
+On public testnet, the runner cannot mint BLND. Explicitly configure a wallet that holds both the required BLND and TestnetV2 USDC and can authenticate their transfers:
 
 ```sh
-BLEND_V21_BLND_SOURCE_CONFIG_DIR=/path/to/stellar-config \
-BLEND_V21_BLND_SOURCE_IDENTITY=my-blnd-holder \
+BLEND_V21_WALLET_CONFIG_DIR=/path/to/stellar-config \
+BLEND_V21_WALLET_IDENTITY=my-testnet-wallet \
 make testnet-deploy
 ```
 
-The source requires at least 600 BLND. The configured wallet also requires at least 6 TestnetV2 USDC. Its public key is recorded in deployment state.
+The wallet requires at least 600 BLND and 6 TestnetV2 USDC. The BLND source config and identity default to the wallet values; set `BLEND_V21_BLND_SOURCE_CONFIG_DIR` and `BLEND_V21_BLND_SOURCE_IDENTITY` as well when a separate account supplies BLND. Before creating local identities, requesting Friendbot funds, writing deployment state, or submitting transactions, the runner requires these settings and verifies that the wallet identity resolves to the configured funding-wallet address. The BLND source public key is recorded in deployment state.
 
 The runner verifies the live TestnetV2 source pool before submitting deployment transactions. It reuses that pool's XLM, USDC, wETH, and wBTC contracts and SEP-40 oracle, and pins its pool and reserve configuration in `fixtures/testnet-v2.json`. It then uploads the unchanged V2 pool WASM, predicts the V2.1 backstop address, deploys the unchanged pool factory and backstop, and deploys one `TestnetV2.1` pool. The pool is left admin-on-ice, outside the reward zone, and with zero backstop shares.
 
@@ -96,6 +96,6 @@ make testnet-enable-emissions
 
 `testnet-start` only checks network health. `testnet-deploy` is the first public-testnet command that submits transactions and deploys the unfunded candidate. `testnet-keeper` is a foreground scheduled process; stop it, run one final `testnet-keeper-once` checkpoint, and only then execute the external emitter swap. `testnet-enable-emissions` is not applicable until the pool has been separately funded and activated and the recorded emitter points to the deployed V2.1 backstop. By default the runner uses BLND contract `CB22KRA3YZVCNCQI64JQ5WE7UY2VAV7WFLK6A2JN3HEX56T2EDAFO7QF`, incumbent backstop `CBDVWXT433PRVTUNM56C3JREF3HIZHRBA64NB2C3B2UNCKIS65ZYCLZA`, and the assets and oracle pinned from TestnetV2. Override them only after independent verification.
 
-Generated identities, state, transaction output, and cost logs are retained in `.localnet/` or `.testnet/` and ignored by Git. A second deployment is rejected while the matching `state.json` exists. Old BLNT deployment state is intentionally incompatible; use a fresh state file for this topology.
+Generated identities, state, transaction output, and cost logs are retained in `.localnet/` or `.testnet/` and ignored by Git. A second deployment is rejected while the matching `state.json` exists. State from an incompatible earlier topology cannot be resumed; use a fresh state file for this deployment.
 
-On public testnet the configured wallet contributes 600 BLND and 6 TestnetV2 USDC to initialize Comet and receives the 100 resulting LP shares. No asset is minted or faucet-funded by this deployment. The wallet config directory and identity can be overridden with `BLEND_V21_WALLET_CONFIG_DIR` and `BLEND_V21_WALLET_IDENTITY`.
+On public testnet the explicitly configured wallet contributes 600 BLND and 6 TestnetV2 USDC to initialize Comet and receives the 100 resulting LP shares. No asset is minted or faucet-funded by this deployment.

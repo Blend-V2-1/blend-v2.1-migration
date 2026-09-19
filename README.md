@@ -2,7 +2,7 @@
 
 This repository collects the repositories and reproducible orchestration used to deploy Blend V2.1 on localnet and Stellar public testnet.
 
-V2.1 is a fresh deployment of the unchanged upstream Blend V2.0.0 contracts. It continues to use the existing BLND asset and V1 emitter, replaces the impaired backstop asset with a new seven-decimal 80:20 BLND:USDC Comet v1.1 LP, and introduces no BLNT asset or backfill contract.
+V2.1 is a fresh deployment of the unchanged upstream Blend V2.0.0 contracts. It continues to use the existing BLND asset and V1 emitter and replaces the impaired backstop asset with a new seven-decimal 80:20 BLND:USDC Comet v1.1 LP.
 
 The migration deploys the unchanged V2 backstop and one pool named `TestnetV2.1`, modeled directly on the `TestnetV2` pool shown by [testnet.blend.capital](https://testnet.blend.capital). On public testnet it reuses TestnetV2's XLM, USDC, wETH, and wBTC assets, live SEP-40 oracle, pool configuration, reserve order, and reserve risk parameters.
 
@@ -40,11 +40,13 @@ make localnet-plan
 make testnet-plan
 ```
 
-Public testnet cannot mint BLND. The 600 BLND and 6 existing TestnetV2 USDC used to initialize the new Comet must come from the configured wallet. Its signing identity is configured with `BLEND_V21_WALLET_CONFIG_DIR` and `BLEND_V21_WALLET_IDENTITY`; the BLND source aliases default to the same identity.
+Public testnet cannot mint BLND. The 600 BLND and 6 existing TestnetV2 USDC used to initialize the new Comet must come from an explicitly configured wallet. The runner validates its signing identity before creating deployment state or submitting transactions. The BLND source aliases default to the same identity.
 
 Deploy the unfunded candidate:
 
 ```sh
+BLEND_V21_WALLET_CONFIG_DIR=/path/to/stellar-config \
+BLEND_V21_WALLET_IDENTITY=my-testnet-wallet \
 make testnet-deploy
 ```
 
