@@ -1,7 +1,3 @@
-[submodule "blnt-backfill-contract"]
-	path = blnt-backfill-contract
-	url = git@github.com:Blend-V2-1/blnt-backfill-contract.git
-	branch = main
 [submodule "comet-contracts-v1.1"]
 	path = comet-contracts-v1.1
 	url = git@github.com:CometDEX/comet-contracts-v1.git

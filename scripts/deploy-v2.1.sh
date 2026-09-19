@@ -14,7 +14,6 @@ case "${NETWORK_MODE}" in
         FRIENDBOT_URL="${BLEND_V21_FRIENDBOT_URL:-http://127.0.0.1:${RPC_PORT}/friendbot}"
         NETWORK_PASSPHRASE="Standalone Network ; February 2017"
         OPERATOR_IDENTITY="${BLEND_V21_OPERATOR_IDENTITY:-blend-v21-local-operator}"
-        BLNT_ISSUER_IDENTITY="${BLEND_V21_BLNT_ISSUER_IDENTITY:-blend-v21-local-blnt-issuer}"
         CONTROLLER_IDENTITY="${BLEND_V21_CONTROLLER_IDENTITY:-blend-v21-local-comet-controller}"
         ;;
     testnet)
@@ -26,7 +25,6 @@ case "${NETWORK_MODE}" in
         FRIENDBOT_URL="${BLEND_V21_FRIENDBOT_URL:-https://friendbot.stellar.org/}"
         NETWORK_PASSPHRASE="Test SDF Network ; September 2015"
         OPERATOR_IDENTITY="${BLEND_V21_OPERATOR_IDENTITY:-blend-v21-testnet-operator}"
-        BLNT_ISSUER_IDENTITY="${BLEND_V21_BLNT_ISSUER_IDENTITY:-blend-v21-testnet-blnt-issuer}"
         CONTROLLER_IDENTITY="${BLEND_V21_CONTROLLER_IDENTITY:-blend-v21-testnet-comet-controller}"
         ;;
     *)
@@ -42,43 +40,34 @@ DOCKER_HOST_URI="${BLEND_V21_DOCKER_HOST:-}"
 DEPLOY_STELLAR="${BLEND_V21_DEPLOY_STELLAR:-stellar}"
 EXTERNAL_BLND="${BLEND_V21_EXTERNAL_BLND:-CB22KRA3YZVCNCQI64JQ5WE7UY2VAV7WFLK6A2JN3HEX56T2EDAFO7QF}"
 EXTERNAL_BLND_ISSUER="${BLEND_V21_EXTERNAL_BLND_ISSUER:-GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56}"
-BLNT_HOME_DOMAIN="${BLEND_BLNT_HOME_DOMAIN:-}"
+EXTERNAL_BLEND_BACKSTOP="${BLEND_V21_EXTERNAL_BLEND_BACKSTOP:-CBDVWXT433PRVTUNM56C3JREF3HIZHRBA64NB2C3B2UNCKIS65ZYCLZA}"
+EXTERNAL_TESTNET_USDC="${BLEND_V21_EXTERNAL_TESTNET_USDC:-CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU}"
+EXTERNAL_TESTNET_USDC_ISSUER="${BLEND_V21_EXTERNAL_TESTNET_USDC_ISSUER:-GATALTGTWIOT6BUDBCZM3Q4OQ4BO2COLOAZ7IYSKPLC2PMSOPPGF5V56}"
+EXTERNAL_TESTNET_WETH="${BLEND_V21_EXTERNAL_TESTNET_WETH:-CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE}"
+EXTERNAL_TESTNET_WBTC="${BLEND_V21_EXTERNAL_TESTNET_WBTC:-CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI}"
+EXTERNAL_TESTNET_ORACLE="${BLEND_V21_EXTERNAL_TESTNET_ORACLE:-CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI}"
+EXTERNAL_TESTNET_V2_POOL="${BLEND_V21_EXTERNAL_TESTNET_V2_POOL:-CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF}"
 FUNDING_WALLET="${BLEND_V21_FUNDING_WALLET:-GDPAIYJ2FISB5H7JNWDNRERAIMGZSP4HVQKYMKO42KRB23GANJXNG2ZI}"
 WALLET_CONFIG_DIR="${BLEND_V21_WALLET_CONFIG_DIR:-${ROOT_DIR}/../blnt-v3-migration/.testnet-production/stellar-config}"
 WALLET_IDENTITY="${BLEND_V21_WALLET_IDENTITY:-blend-v3-ui-testnet-wallet}"
+BLND_SOURCE_CONFIG_DIR="${BLEND_V21_BLND_SOURCE_CONFIG_DIR:-${WALLET_CONFIG_DIR}}"
+BLND_SOURCE_IDENTITY="${BLEND_V21_BLND_SOURCE_IDENTITY:-${WALLET_IDENTITY}}"
 
 SCALAR_7=10000000
-BACKFILL_ALLOCATION=$((74000000 * SCALAR_7))
-GRANT_ALLOCATION=0
-SWAP_CAPACITY=$((51000000 * SCALAR_7))
-BACKFILL_PREMINT=$((125000000 * SCALAR_7))
-COMET_BLNT_BALANCE=$((600 * SCALAR_7))
+COMET_BLND_BALANCE=$((600 * SCALAR_7))
 COMET_USDC_BALANCE=$((6 * SCALAR_7))
 COMET_INITIAL_LP_SUPPLY=$((100 * SCALAR_7))
-COMET_LIQUIDITY_BLNT_FUNDING=$((999996 * SCALAR_7))
-COMET_LIQUIDITY_USDC_FUNDING=$((9999 * SCALAR_7 + 9600000))
-COMET_ADDITIONAL_LP_SUPPLY=$((166666 * SCALAR_7))
-COMET_BACKSTOP_LP_SUPPLY=$((166766 * SCALAR_7))
-COMET_FINAL_BLNT_BALANCE=$((COMET_BLNT_BALANCE + COMET_LIQUIDITY_BLNT_FUNDING))
-COMET_FINAL_USDC_BALANCE=$((COMET_USDC_BALANCE + COMET_LIQUIDITY_USDC_FUNDING))
-COMET_BLNT_WEIGHT=8000000
+COMET_BLND_WEIGHT=8000000
 COMET_USDC_WEIGHT=2000000
 COMET_SWAP_FEE=30000
 COMET_CONTROLLER_THRESHOLD=100
-BLNT_ISSUER_THRESHOLD=88
-WALLET_BLNT_FUNDING=$((1000000 * SCALAR_7))
-WALLET_USDC_FUNDING=$((1000000 * SCALAR_7))
-WALLET_EURC_FUNDING=$((1000000 * SCALAR_7))
-WALLET_XLM_FUNDING=$((100000 * SCALAR_7))
-FIXED_POOL_USDC_SUPPLY=$((1000 * SCALAR_7))
 FIXTURE_ORACLE_RESOLUTION=300
 FIXTURE_ORACLE_RECORDS=7
 BACKSTOP_SALT="${BLEND_V21_BACKSTOP_SALT:-0000000000000000000000000000000000000000000000000000000000000021}"
-FIXED_POOL_SALT="${BLEND_V21_FIXED_POOL_SALT:-000000000000000000000000000000000000000000000000000000000000f121}"
+TESTNET_V21_POOL_SALT="${BLEND_V21_POOL_SALT:-000000000000000000000000000000000000000000000000000000000000f121}"
 
 V1_DIR="${ROOT_DIR}/blend-contracts"
 V2_DIR="${ROOT_DIR}/blend-contracts-v2"
-BACKFILL_DIR="${ROOT_DIR}/blnt-backfill-contract"
 COMET_DIR="${ROOT_DIR}/comet-contracts-v1.1"
 V1_EMITTER_WASM="${V1_DIR}/blend-contract-sdk/wasm/emitter.wasm"
 V1_EMITTER_SHA256="438a5528cff17ede6fe515f095c43c5f15727af17d006971485e52462e7e7b89"
@@ -92,18 +81,13 @@ V2_BACKSTOP_RELEASE="v2.0.0_backstop_cli22.0.1"
 V2_POOL_WASM="${V2_ARTIFACT_DIR}/pool.wasm"
 V2_POOL_SHA256="a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e"
 V2_POOL_RELEASE="v2.0.0_pool_cli22.0.1"
-BACKFILL_WASM="${BACKFILL_DIR}/target/wasm32v1-none/optimized/blnt_backfill_contract.wasm"
-BACKFILL_WASM_SHA256="a30dd9dab5b0a41e14ede140dfeb250f610bee8922f3c6ca963ec813d1a209cc"
 COMET_WASM="${COMET_DIR}/target/wasm32v1-none/optimized/comet.wasm"
 COMET_WASM_SHA256="7613f207c48f69c0299da2cb4a7a2946bbac7479ffcbeb7e428aa1d4ee37d113"
 ORACLE_DIR="${ROOT_DIR}/test-sep40-oracle"
 ORACLE_WASM="${ORACLE_DIR}/target/wasm32v1-none/optimized/blend_v21_test_sep40_oracle.wasm"
 ORACLE_WASM_SHA256="d60558a660250bc6c1dc318c0e0f4e0d1ec42ab84341c92d465a0bb378daf262"
-FIXED_POOL_FIXTURE="${ROOT_DIR}/fixtures/fixed-pool-v2.json"
-FIXED_POOL_FIXTURE_SHA256="39892a921f997390b7b401b3ba5686bb4e1ce982312869154bc11ab02cb7fd28"
-BACKFILL_MANIFEST="${BACKFILL_DIR}/allocations/comet_cpal_backfill.json"
-BACKFILL_SOURCE_SHA256="30fbbb6c62c8812a94cfb02f1c9d528235a28dcddfb45fa7f5535e39fd9a4cd3"
-CLAIM_LIST=""
+TESTNET_V2_FIXTURE="${ROOT_DIR}/fixtures/testnet-v2.json"
+TESTNET_V2_FIXTURE_SHA256="cc81042982380d7cc1ee4a2bd65f294c73c8110444908722d3d8187027a3ca7b"
 RUN_DIR=""
 
 usage() {
@@ -112,17 +96,25 @@ Usage: scripts/deploy-v2.1.sh COMMAND
 
 Commands:
   plan      Describe the v2.1 deployment without mutation.
-  validate  Validate the allocation manifest and build all pinned artifacts.
+  validate  Build and validate all pinned contract artifacts.
   start     Start local Protocol-27 Quickstart or check public testnet health.
-  deploy    Deploy and verify a fresh v2.1 stack on the selected network.
-  resume    Resume the recorded deployment without repeating completed funding.
+  deploy    Deploy and verify a fresh unfunded v2.1 TestnetV2.1 stack.
+  resume    Resume pool configuration after an interrupted deployment.
+  activate-pool
+            After user funding, activate borrowing, enroll TestnetV2.1 in the
+            reward zone, and start legacy backfill accounting.
+  enable-emissions
+            Finalize the legacy backfill drop and normal emissions after the
+            emitter completes its normal backstop swap to V2.1.
   run       Validate, start, deploy, and report status.
   status    Read and verify the recorded deployment without submitting transactions.
   stop      Stop the ephemeral local Quickstart container.
 
 Set BLEND_V21_NETWORK=testnet for public testnet. Public state, signing keys,
 transaction output, and cost logs remain in the ignored network work directory.
-Set BLEND_BLNT_HOME_DOMAIN to an optional BLNT issuer metadata domain.
+Testnet deployment reuses the existing BLND asset and emitter. Configure an
+identity holding enough BLND with BLEND_V21_BLND_SOURCE_CONFIG_DIR and
+BLEND_V21_BLND_SOURCE_IDENTITY.
 EOF
 }
 
@@ -137,25 +129,6 @@ die() {
 
 require_command() {
     command -v "$1" >/dev/null 2>&1 || die "required command not found: $1"
-}
-
-validate_blnt_home_domain() {
-    local label
-    local -a labels
-    [[ -z "${BLNT_HOME_DOMAIN}" ]] && return
-    [[ "${#BLNT_HOME_DOMAIN}" -le 32 ]] ||
-        die "BLEND_BLNT_HOME_DOMAIN exceeds Stellar's 32-character limit"
-    [[ "${BLNT_HOME_DOMAIN}" != .* && \
-        "${BLNT_HOME_DOMAIN}" != *. && \
-        "${BLNT_HOME_DOMAIN}" != *..* ]] ||
-        die "invalid BLEND_BLNT_HOME_DOMAIN: ${BLNT_HOME_DOMAIN}"
-    IFS='.' read -r -a labels <<<"${BLNT_HOME_DOMAIN}"
-    [[ "${#labels[@]}" -gt 0 ]] ||
-        die "invalid BLEND_BLNT_HOME_DOMAIN: ${BLNT_HOME_DOMAIN}"
-    for label in "${labels[@]}"; do
-        [[ "${label}" =~ ^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?$ ]] ||
-            die "invalid BLEND_BLNT_HOME_DOMAIN: ${BLNT_HOME_DOMAIN}"
-    done
 }
 
 sha256_file() {
@@ -212,67 +185,36 @@ validate_build_tools() {
     require_command shasum
 }
 
-validate_manifest() {
-    [[ -s "${BACKFILL_MANIFEST}" ]] ||
-        die "backfill allocation manifest is missing: ${BACKFILL_MANIFEST}"
-    jq -e \
-        --arg allocation "${BACKFILL_ALLOCATION}" \
-        --arg source_hash "${BACKFILL_SOURCE_SHA256}" \
-        '
-          .schema_version == 1 and
-          .source_file == "comet_cpal_flattened_ownership_before_41c898a1.csv" and
-          .source_sha256 == $source_hash and
-          .weight_field == "flattened_total_cpal_raw" and
-          .allocation_total_raw == $allocation and
-          .claimant_count == 434 and
-          .claimant_type_counts.account == 423 and
-          .claimant_type_counts.contract == 11 and
-          (.allocations | length) == 434 and
-          ([.allocations[].owner_address] | unique | length) == 434 and
-          ([.allocations[].allocation_raw | test("^[1-9][0-9]*$")] | all) and
-          (([.allocations[].allocation_raw | tonumber] | add | tostring) == $allocation)
-        ' "${BACKFILL_MANIFEST}" >/dev/null ||
-        die "backfill allocation manifest failed invariant validation"
-
-    CLAIM_LIST="$(jq -c '[.allocations[] | [.owner_address, .allocation_raw]]' \
-        "${BACKFILL_MANIFEST}")"
+validate_testnet_v2_fixture() {
+    [[ -s "${TESTNET_V2_FIXTURE}" ]] ||
+        die "TestnetV2 fixture is missing: ${TESTNET_V2_FIXTURE}"
     jq -e '
-        type == "array" and length == 434 and
-        ([.[] |
-          type == "array" and length == 2 and
-          (.[0] | type == "string" and test("^[CG][A-Z2-7]{55}$")) and
-          (.[1] | type == "string" and test("^[1-9][0-9]*$"))
-        ] | all) and
-        ([.[][0]] | unique | length) == 434
-    ' <<<"${CLAIM_LIST}" >/dev/null || die "invalid committed claim-list encoding"
-    assert_equal "${BACKFILL_PREMINT}" \
-        "$((BACKFILL_ALLOCATION + GRANT_ALLOCATION + SWAP_CAPACITY))" \
-        "zero-grant backfill funding"
-}
-
-validate_fixed_pool_fixture() {
-    [[ -s "${FIXED_POOL_FIXTURE}" ]] ||
-        die "Fixed Pool V2 fixture is missing: ${FIXED_POOL_FIXTURE}"
-    jq -e '
-      .source.mainnet_pool == "CAJJZSGMMM3PD7N33TAPHGBUGTB43OC73HVIK2L2G6BNGGGYOSSYBXBD" and
-      .prices == {XLM: 2500000, USDC: 10000000, EURC: 10000000} and
-      .pool.name == "Fixed" and
-      .pool.backstop_take_rate == 2000000 and
-      .pool.max_positions == 6 and
-      .pool.min_collateral == 50000000 and
-      ([.pool.reserves[].asset] == ["XLM", "USDC", "EURC"]) and
-      (.pool.reserves | length == 3) and
+      .source.network == "testnet" and
+      .source.pool == "CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF" and
+      .source.oracle == "CAZOKR2Y5E2OSWSIBRVZMJ47RUTQPIGVWSAQ2UISGAVC46XKPGDG5PKI" and
+      .assets == {
+        XLM: "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+        USDC: "CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU",
+        wETH: "CAZAQB3D7KSLSNOSQKYD2V4JP5V2Y3B4RDJZRLBFCCIXDCTE3WHSY3UE",
+        wBTC: "CAP5AMC2OHNVREO66DFIN6DHJMPOBAJ2KCDDIMFBR7WWJH5RZBFM3UEI"
+      } and
+      .pool.name == "TestnetV2.1" and
+      .pool.backstop_take_rate == 1000000 and
+      .pool.max_positions == 8 and
+      .pool.min_collateral == "0" and
+      ([.pool.reserves[].asset] == ["XLM", "wETH", "wBTC", "USDC"]) and
+      (.pool.reserves | length == 4) and
       .pool.emissions == [
-        {res_index: 0, res_type: 1, share: 2000000},
         {res_index: 1, res_type: 0, share: 4000000},
-        {res_index: 2, res_type: 0, share: 4000000}
+        {res_index: 2, res_type: 1, share: 2000000},
+        {res_index: 3, res_type: 0, share: 4000000}
       ]
-    ' "${FIXED_POOL_FIXTURE}" >/dev/null ||
-        die "Fixed Pool V2 fixture failed invariant validation"
+    ' "${TESTNET_V2_FIXTURE}" >/dev/null ||
+        die "TestnetV2 fixture failed invariant validation"
 }
 
 build_artifacts() {
-    note "Fetching official V2 artifacts and building the two custom contract lanes..."
+    note "Fetching official V2 artifacts and building Comet v1.1 and the test oracle..."
     make -C "${ROOT_DIR}" build
 }
 
@@ -283,7 +225,6 @@ validate_artifacts() {
         "${V2_FACTORY_WASM}" \
         "${V2_BACKSTOP_WASM}" \
         "${V2_POOL_WASM}" \
-        "${BACKFILL_WASM}" \
         "${COMET_WASM}" \
         "${ORACLE_WASM}"
     do
@@ -297,16 +238,14 @@ validate_artifacts() {
         "official V2 backstop release WASM hash"
     assert_equal "${V2_POOL_SHA256}" "$(sha256_file "${V2_POOL_WASM}")" \
         "official V2 pool release WASM hash"
-    assert_equal "${BACKFILL_WASM_SHA256}" "$(sha256_file "${BACKFILL_WASM}")" \
-        "designated BLNT backfill WASM hash"
     assert_equal "${COMET_WASM_SHA256}" "$(sha256_file "${COMET_WASM}")" \
         "designated Comet v1.1 WASM hash"
     assert_equal "${ORACLE_WASM_SHA256}" "$(sha256_file "${ORACLE_WASM}")" \
         "designated test SEP-40 oracle WASM hash"
-    assert_equal "${FIXED_POOL_FIXTURE_SHA256}" \
-        "$(sha256_file "${FIXED_POOL_FIXTURE}")" \
-        "designated Fixed Pool V2 fixture hash"
-    validate_fixed_pool_fixture
+    assert_equal "${TESTNET_V2_FIXTURE_SHA256}" \
+        "$(sha256_file "${TESTNET_V2_FIXTURE}")" \
+        "designated TestnetV2 fixture hash"
+    validate_testnet_v2_fixture
 }
 
 network_healthy() {
@@ -370,7 +309,7 @@ new_run_dir() {
 }
 
 initialize_state() {
-    local operator="$1" blnt_issuer="$2" controller="$3"
+    local operator="$1" controller="$2"
     mkdir -p "${WORK_DIR}"
     jq -n \
         --arg network_mode "${NETWORK_MODE}" \
@@ -378,15 +317,11 @@ initialize_state() {
         --arg network_passphrase "${NETWORK_PASSPHRASE}" \
         --arg rpc_url "${RPC_URL}" \
         --arg operator "${operator}" \
-        --arg blnt_issuer "${blnt_issuer}" \
-        --arg blnt_home_domain "${BLNT_HOME_DOMAIN}" \
         --arg comet_controller "${controller}" \
-        --argjson blnt_issuer_threshold "${BLNT_ISSUER_THRESHOLD}" \
         --arg run_dir "${RUN_DIR}" \
         --arg root_commit "$(git -C "${ROOT_DIR}" rev-parse HEAD)" \
         --arg v1_commit "$(git -C "${V1_DIR}" rev-parse HEAD)" \
         --arg v2_commit "$(git -C "${V2_DIR}" rev-parse HEAD)" \
-        --arg backfill_commit "$(git -C "${BACKFILL_DIR}" rev-parse HEAD)" \
         --arg comet_commit "$(git -C "${COMET_DIR}" rev-parse HEAD)" \
         --arg root_dirty "$(git -C "${ROOT_DIR}" status --porcelain=v1)" \
         --arg created_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
@@ -396,9 +331,6 @@ initialize_state() {
           network_passphrase: $network_passphrase,
           rpc_url: $rpc_url,
           operator: $operator,
-          blnt_issuer: $blnt_issuer,
-          blnt_issuer_threshold: $blnt_issuer_threshold,
-          blnt_home_domain: $blnt_home_domain,
           comet_controller: $comet_controller,
           run_dir: $run_dir,
           source: {
@@ -406,7 +338,6 @@ initialize_state() {
             migration_dirty: ($root_dirty != ""),
             blend_contracts_v1: $v1_commit,
             blend_contracts_v2: $v2_commit,
-            backfill: $backfill_commit,
             comet_v11: $comet_commit
           },
           created_at: $created_at,
@@ -433,6 +364,37 @@ state_set() {
     mv "${temporary}" "${STATE_FILE}"
 }
 
+state_mark_emissions_enabled() {
+    local timestamp temporary="${STATE_FILE}.tmp"
+    timestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    jq --arg timestamp "${timestamp}" '
+      .emissions_enabled = "true" |
+      .backfill_active = "false" |
+      .emissions_enabled_at = $timestamp |
+      .phase = "verified" |
+      .verified_at = $timestamp
+    ' "${STATE_FILE}" >"${temporary}"
+    mv "${temporary}" "${STATE_FILE}"
+}
+
+state_mark_pool_activated() {
+    local timestamp fixture_sha256 temporary="${STATE_FILE}.tmp"
+    timestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    fixture_sha256="$(sha256_file "${TESTNET_V2_FIXTURE}")"
+    jq --arg timestamp "${timestamp}" --arg fixture_sha256 "${fixture_sha256}" '
+      .pool_backstop_funded = "true" |
+      .pool_activation_pending = "false" |
+      .backfill_enabled = "true" |
+      .backfill_active = "true" |
+      .emissions_enabled = "false" |
+      .pool_activated_at = $timestamp |
+      .testnet_v2_fixture_sha256 = $fixture_sha256 |
+      .phase = "verified" |
+      .verified_at = $timestamp
+    ' "${STATE_FILE}" >"${temporary}"
+    mv "${temporary}" "${STATE_FILE}"
+}
+
 state_record() {
     local key="$1" expected="$2" recorded
     recorded="$(state_optional "${key}")"
@@ -444,7 +406,6 @@ state_record() {
 }
 
 record_deployment_inputs() {
-    state_record "manifest_sha256" "$(sha256_file "${BACKFILL_MANIFEST}")"
     state_record "v1_emitter_wasm_sha256" "$(sha256_file "${V1_EMITTER_WASM}")"
     state_record "v2_factory_wasm_sha256" "$(sha256_file "${V2_FACTORY_WASM}")"
     state_record "v2_factory_release" "${V2_FACTORY_RELEASE}"
@@ -452,31 +413,20 @@ record_deployment_inputs() {
     state_record "v2_backstop_release" "${V2_BACKSTOP_RELEASE}"
     state_record "v2_pool_wasm_sha256" "$(sha256_file "${V2_POOL_WASM}")"
     state_record "v2_pool_release" "${V2_POOL_RELEASE}"
-    state_record "backfill_wasm_sha256" "$(sha256_file "${BACKFILL_WASM}")"
     state_record "comet_v11_wasm_sha256" "$(sha256_file "${COMET_WASM}")"
-    state_record "fixed_oracle_wasm_sha256" "$(sha256_file "${ORACLE_WASM}")"
-    state_record "fixed_pool_fixture_sha256" "$(sha256_file "${FIXED_POOL_FIXTURE}")"
-    state_record "backfill_claim_allocation" "${BACKFILL_ALLOCATION}"
-    state_record "contributor_grant_allocation" "${GRANT_ALLOCATION}"
-    state_record "conversion_capacity" "${SWAP_CAPACITY}"
-    state_record "backfill_premint" "${BACKFILL_PREMINT}"
-    state_record "comet_initial_blnt" "${COMET_BLNT_BALANCE}"
+    state_record "local_oracle_wasm_sha256" "$(sha256_file "${ORACLE_WASM}")"
+    state_record "testnet_v2_fixture_sha256" "$(sha256_file "${TESTNET_V2_FIXTURE}")"
+    state_record "comet_initial_blnd" "${COMET_BLND_BALANCE}"
     state_record "comet_initial_usdc" "${COMET_USDC_BALANCE}"
     state_record "comet_initial_lp_supply" "${COMET_INITIAL_LP_SUPPLY}"
-    state_record "comet_liquidity_blnt_funding" \
-        "${COMET_LIQUIDITY_BLNT_FUNDING}"
-    state_record "comet_liquidity_usdc_funding" \
-        "${COMET_LIQUIDITY_USDC_FUNDING}"
-    state_record "comet_additional_lp_supply" "${COMET_ADDITIONAL_LP_SUPPLY}"
-    state_record "comet_backstop_lp_supply" "${COMET_BACKSTOP_LP_SUPPLY}"
+    state_record "backstop_salt" "${BACKSTOP_SALT}"
+    state_record "pool_salt" "${TESTNET_V21_POOL_SALT}"
 }
 
 load_state() {
     [[ -s "${STATE_FILE}" ]] || die "deployment state not found: ${STATE_FILE}"
     assert_equal "${NETWORK_MODE}" "$(state_value network_mode)" "saved network mode"
     assert_equal "${RPC_URL}" "$(state_value rpc_url)" "saved RPC URL"
-    assert_equal "${BLNT_ISSUER_THRESHOLD}" \
-        "$(state_value blnt_issuer_threshold)" "saved BLNT issuer threshold"
     RUN_DIR="$(state_value run_dir)"
     [[ -d "${RUN_DIR}" ]] || die "saved run directory not found: ${RUN_DIR}"
 }
@@ -607,9 +557,50 @@ wallet_stellar_cli() {
     "${DEPLOY_STELLAR}" --config-dir "${WALLET_CONFIG_DIR}" "$@"
 }
 
+blnd_source_stellar_cli() {
+    "${DEPLOY_STELLAR}" --config-dir "${BLND_SOURCE_CONFIG_DIR}" "$@"
+}
+
+require_blnd_source_access() {
+    local expected="$1" configured
+    [[ "${NETWORK_MODE}" == "testnet" ]] || return 0
+    [[ -d "${BLND_SOURCE_CONFIG_DIR}" ]] ||
+        die "BLND source Stellar config directory not found: ${BLND_SOURCE_CONFIG_DIR}"
+    configured="$(blnd_source_stellar_cli keys public-key "${BLND_SOURCE_IDENTITY}")" ||
+        die "BLND source identity is unavailable: ${BLND_SOURCE_IDENTITY}"
+    assert_equal "${expected}" "${configured}" "configured BLND source identity"
+}
+
+fund_controller_blnd() {
+    local blnd="$1" controller="$2" target="$3" source="$4"
+    local balance difference available
+    balance="$(normalize_scalar "$(invoke_view \
+        "query-controller-blnd-funding" "${blnd}" balance --id "${controller}")")"
+    (( balance <= target )) || die "controller BLND exceeds expected funding"
+    difference=$((target - balance))
+    (( difference > 0 )) || return 0
+    if [[ "${NETWORK_MODE}" == "local" ]]; then
+        invoke_transaction "mint-controller-blnd" "${blnd}" mint \
+            --to "${controller}" --amount "${difference}" >/dev/null
+        return
+    fi
+    require_blnd_source_access "${source}"
+    available="$(normalize_scalar "$(invoke_view \
+        "query-blnd-source-balance" "${blnd}" balance --id "${source}")")"
+    (( available >= difference )) ||
+        die "BLND source requires ${difference}, only ${available} is available"
+    capture "transfer-controller-blnd" blnd_source_stellar_cli contract invoke \
+        --id "${blnd}" \
+        --source-account "${BLND_SOURCE_IDENTITY}" \
+        --rpc-url "${RPC_URL}" \
+        --network-passphrase "${NETWORK_PASSPHRASE}" \
+        --cost -- transfer --from "${source}" --to "${controller}" \
+        --amount "${difference}" >/dev/null
+}
+
 require_funding_wallet_access() {
     local configured_wallet
-    [[ "${NETWORK_MODE}" == "testnet" ]] || return
+    [[ "${NETWORK_MODE}" == "testnet" ]] || return 0
     [[ -d "${WALLET_CONFIG_DIR}" ]] ||
         die "wallet Stellar config directory not found: ${WALLET_CONFIG_DIR}"
     configured_wallet="$(wallet_stellar_cli keys public-key "${WALLET_IDENTITY}")" ||
@@ -618,58 +609,31 @@ require_funding_wallet_access() {
         "configured funding-wallet identity"
 }
 
-create_wallet_trustline() {
-    local label="$1" asset="$2"
-    capture "${label}" wallet_stellar_cli tx new change-trust \
+fund_controller_usdc() {
+    local usdc="$1" controller="$2" target="$3"
+    local balance difference available
+    balance="$(normalize_scalar "$(invoke_view \
+        "query-controller-usdc-funding" "${usdc}" balance --id "${controller}")")"
+    (( balance <= target )) || die "controller USDC exceeds expected funding"
+    difference=$((target - balance))
+    (( difference > 0 )) || return 0
+    if [[ "${NETWORK_MODE}" == "local" ]]; then
+        invoke_transaction "mint-controller-usdc" "${usdc}" mint \
+            --to "${controller}" --amount "${difference}" >/dev/null
+        return
+    fi
+    require_funding_wallet_access
+    available="$(normalize_scalar "$(invoke_view \
+        "query-usdc-source-balance" "${usdc}" balance --id "${FUNDING_WALLET}")")"
+    (( available >= difference )) ||
+        die "funding wallet requires ${difference} USDC stroops, only ${available} are available"
+    capture "transfer-controller-usdc" wallet_stellar_cli contract invoke \
+        --id "${usdc}" \
         --source-account "${WALLET_IDENTITY}" \
-        --line "${asset}" \
         --rpc-url "${RPC_URL}" \
-        --network-passphrase "${NETWORK_PASSPHRASE}" >/dev/null
-}
-
-ensure_wallet_trustline() {
-    local label="$1" code="$2" issuer="$3" account
-    account="$(capture "query-wallet-${label}-trustline" \
-        curl --fail --silent --show-error --max-time 10 \
-        "${HORIZON_URL}/accounts/${FUNDING_WALLET}")"
-    if printf '%s' "${account}" | jq -e \
-        --arg code "${code}" --arg issuer "${issuer}" '
-          any(.balances[];
-            .asset_type != "native" and
-            .asset_code == $code and
-            .asset_issuer == $issuer)
-        ' >/dev/null
-    then
-        return
-    fi
-    create_wallet_trustline "trust-wallet-${label}" "${code}:${issuer}"
-}
-
-ensure_wallet_token_funding() {
-    local label="$1" token="$2" source="$3" expected="$4"
-    local state_key recorded balance
-    state_key="wallet_${label}_funded"
-    recorded="$(state_optional "${state_key}")"
-    if [[ -n "${recorded}" ]]; then
-        assert_equal "${expected}" "${recorded}" "recorded wallet ${label} funding"
-        return
-    fi
-    balance="$(normalize_scalar "$(invoke_view \
-        "query-wallet-${label}-before-funding" "${token}" balance \
-        --id "${FUNDING_WALLET}")")"
-    if (( balance == 0 )); then
-        invoke_transaction_as "fund-wallet-${label}" "${source}" \
-            "${token}" mint --to "${FUNDING_WALLET}" --amount "${expected}" \
-            >/dev/null
-    else
-        assert_equal "${expected}" "${balance}" \
-            "unrecorded wallet ${label} balance"
-    fi
-    balance="$(normalize_scalar "$(invoke_view \
-        "verify-wallet-${label}-funding" "${token}" balance \
-        --id "${FUNDING_WALLET}")")"
-    assert_equal "${expected}" "${balance}" "wallet ${label} funding"
-    state_set "${state_key}" "${expected}"
+        --network-passphrase "${NETWORK_PASSPHRASE}" \
+        --cost -- transfer --from "${FUNDING_WALLET}" --to "${controller}" \
+        --amount "${difference}" >/dev/null
 }
 
 resolve_native_asset() {
@@ -683,137 +647,14 @@ resolve_native_asset() {
     printf '%s\n' "${contract_id}"
 }
 
-fund_testnet_wallet_xlm() {
-    local donor identity amount index completed total=0 payments
-    [[ "${NETWORK_MODE}" == "testnet" ]] || return
-    completed="$(state_optional wallet_xlm_donors_completed)"
-    completed="${completed:-0}"
-    for index in {1..12}; do
-        if (( index <= completed )); then
-            if (( index < 12 )); then
-                total=$((total + 9000 * SCALAR_7))
-            else
-                total=$((total + 1000 * SCALAR_7))
-            fi
-            continue
-        fi
-        identity="blend-v21-testnet-xlm-donor-${index}"
-        donor="$(ensure_identity "${identity}")"
-        fund_and_wait_for_account "${donor}"
-        if (( index < 12 )); then
-            amount=$((9000 * SCALAR_7))
-        else
-            amount=$((1000 * SCALAR_7))
-        fi
-        payments="$(capture "query-wallet-xlm-${index}-payments" \
-            curl --fail --silent --show-error --max-time 10 \
-            "${HORIZON_URL}/accounts/${donor}/payments?limit=200&order=desc")"
-        if printf '%s' "${payments}" | jq -e \
-            --arg donor "${donor}" --arg wallet "${FUNDING_WALLET}" \
-            --arg expected "${amount}" '
-              def raw:
-                split(".") as $parts |
-                ((($parts[0] | tonumber) * 10000000) +
-                 (((($parts[1] // "") + "0000000")[0:7]) | tonumber) | tostring);
-              any(._embedded.records[];
-                .type == "payment" and .from == $donor and .to == $wallet and
-                .asset_type == "native" and (.amount | raw) == $expected)
-            ' >/dev/null
-        then
-            total=$((total + amount))
-            state_set "wallet_xlm_donors_completed" "${index}"
-            continue
-        fi
-        capture "fund-wallet-xlm-${index}" stellar_cli tx new payment \
-            --source-account "${identity}" \
-            --destination "${FUNDING_WALLET}" \
-            --asset native \
-            --amount "${amount}" \
-            --rpc-url "${RPC_URL}" \
-            --network-passphrase "${NETWORK_PASSPHRASE}" >/dev/null
-        total=$((total + amount))
-        state_set "wallet_xlm_donors_completed" "${index}"
-    done
-    assert_equal "${WALLET_XLM_FUNDING}" "${total}" "wallet XLM transfer total"
-    state_set "wallet_xlm_funded" "${total}"
-}
-
 verify_comet_controller_empty() {
-    local blnt="$1" usdc="$2" controller="$3"
+    local blnd="$1" usdc="$2" controller="$3"
     assert_equal "0" "$(normalize_scalar "$(invoke_view \
-        "verify-controller-blnt-empty" "${blnt}" balance \
-        --id "${controller}")")" "controller BLNT balance before lock"
+        "verify-controller-blnd-empty" "${blnd}" balance \
+        --id "${controller}")")" "controller BLND balance before lock"
     assert_equal "0" "$(normalize_scalar "$(invoke_view \
         "verify-controller-usdc-empty" "${usdc}" balance \
         --id "${controller}")")" "controller USDC balance before lock"
-}
-
-provision_comet_liquidity() {
-    local comet="$1" blnt="$2" usdc="$3" controller="$4" operator="$5"
-    local controller_lp operator_lp balance
-
-    controller_lp="$(normalize_scalar "$(invoke_view \
-        "query-controller-additional-comet-lp" "${comet}" balance \
-        --id "${controller}")")"
-    operator_lp="$(normalize_scalar "$(invoke_view \
-        "query-operator-comet-lp-before-liquidity" "${comet}" balance \
-        --id "${operator}")")"
-
-    if (( operator_lp == COMET_BACKSTOP_LP_SUPPLY )); then
-        assert_equal "0" "${controller_lp}" "controller Comet LP balance"
-        verify_comet_controller_empty "${blnt}" "${usdc}" "${controller}"
-        state_set "comet_liquidity_joined" "true"
-        state_set "comet_liquidity_transferred" "true"
-        return
-    fi
-    assert_equal "${COMET_INITIAL_LP_SUPPLY}" "${operator_lp}" \
-        "operator Comet LP balance before liquidity provision"
-
-    if (( controller_lp == 0 )); then
-        balance="$(normalize_scalar "$(invoke_view \
-            "query-controller-liquidity-blnt" "${blnt}" balance \
-            --id "${controller}")")"
-        (( balance <= COMET_LIQUIDITY_BLNT_FUNDING )) ||
-            die "controller BLNT exceeds the additional Comet liquidity funding"
-        if (( balance < COMET_LIQUIDITY_BLNT_FUNDING )); then
-            invoke_transaction_as "mint-comet-liquidity-blnt" \
-                "${BLNT_ISSUER_IDENTITY}" "${blnt}" mint \
-                --to "${controller}" \
-                --amount "$((COMET_LIQUIDITY_BLNT_FUNDING - balance))" >/dev/null
-        fi
-        balance="$(normalize_scalar "$(invoke_view \
-            "query-controller-liquidity-usdc" "${usdc}" balance \
-            --id "${controller}")")"
-        (( balance <= COMET_LIQUIDITY_USDC_FUNDING )) ||
-            die "controller USDC exceeds the additional Comet liquidity funding"
-        if (( balance < COMET_LIQUIDITY_USDC_FUNDING )); then
-            invoke_transaction "mint-comet-liquidity-usdc" "${usdc}" mint \
-                --to "${controller}" \
-                --amount "$((COMET_LIQUIDITY_USDC_FUNDING - balance))" >/dev/null
-        fi
-        state_set "comet_liquidity_funded" "true"
-        invoke_transaction_as "join-comet-liquidity" "${CONTROLLER_IDENTITY}" \
-            "${comet}" join_pool \
-            --pool_amount_out "${COMET_ADDITIONAL_LP_SUPPLY}" \
-            --max_amounts_in \
-            "[\"${COMET_LIQUIDITY_BLNT_FUNDING}\",\"${COMET_LIQUIDITY_USDC_FUNDING}\"]" \
-            --user "${controller}" >/dev/null
-        controller_lp="${COMET_ADDITIONAL_LP_SUPPLY}"
-    else
-        assert_equal "${COMET_ADDITIONAL_LP_SUPPLY}" "${controller_lp}" \
-            "existing controller additional Comet LP balance"
-    fi
-    state_set "comet_liquidity_joined" "true"
-    verify_comet_controller_empty "${blnt}" "${usdc}" "${controller}"
-    invoke_transaction_as "transfer-additional-comet-lp" \
-        "${CONTROLLER_IDENTITY}" "${comet}" transfer \
-        --from "${controller}" --to "${operator}" \
-        --amount "${COMET_ADDITIONAL_LP_SUPPLY}" >/dev/null
-    state_set "comet_liquidity_transferred" "true"
-    assert_equal "${COMET_BACKSTOP_LP_SUPPLY}" \
-        "$(normalize_scalar "$(invoke_view \
-            "verify-operator-comet-lp-after-liquidity" "${comet}" balance \
-            --id "${operator}")")" "operator Comet LP balance"
 }
 
 fixture_price_series() {
@@ -831,198 +672,181 @@ fixture_price_series() {
         }]'
 }
 
-fixed_asset_id() {
+modeled_asset_id() {
     case "$1" in
         XLM) state_value xlm_token ;;
         USDC) state_value usdc_token ;;
-        EURC) state_value eurc_token ;;
-        *) die "unknown Fixed Pool asset: $1" ;;
+        wETH) state_value weth_token ;;
+        wBTC) state_value wbtc_token ;;
+        *) die "unknown TestnetV2 asset: $1" ;;
     esac
 }
 
-seed_fixed_oracle() {
+seed_modeled_oracle() {
     local oracle="$1" asset token price prices label
-    for asset in XLM USDC EURC; do
+    for asset in USDC XLM wETH wBTC; do
         label="$(printf '%s' "${asset}" | tr '[:upper:]' '[:lower:]')"
-        token="$(fixed_asset_id "${asset}")"
-        price="$(jq -er --arg asset "${asset}" '.prices[$asset]' \
-            "${FIXED_POOL_FIXTURE}")"
+        token="$(modeled_asset_id "${asset}")"
+        case "${asset}" in
+            USDC) price=10000000 ;;
+            XLM) price=2500000 ;;
+            wETH) price=25000000000 ;;
+            wBTC) price=1000000000000 ;;
+        esac
         prices="$(fixture_price_series "${price}")"
-        if ! invoke_transaction "seed-fixed-oracle-${label}" \
+        if ! invoke_transaction "seed-testnet-v21-oracle-${label}" \
             "${oracle}" set_prices \
             --asset "{\"Stellar\":\"${token}\"}" \
             --prices "${prices}" >/dev/null
         then
-            note "Failed to refresh Fixed oracle ${asset} price history."
+            note "Failed to refresh local TestnetV2.1 oracle ${asset} price history."
             return 1
         fi
     done
-    state_set "fixed_oracle_refreshed_at" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    state_set "pool_oracle_refreshed_at" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 }
 
-fixed_reserve_config() {
+modeled_reserve_config() {
     local index="$1"
     jq -c --argjson index "${index}" \
         '.pool.reserves[$index].config + {
           decimals: 7,
           enabled: true,
           index: $index
-        }' "${FIXED_POOL_FIXTURE}"
+        }' "${TESTNET_V2_FIXTURE}"
 }
 
-deploy_fixed_pool() {
+validate_live_testnet_v2_source() {
+    local config reserves asset token expected index=0
+    [[ "${NETWORK_MODE}" == "testnet" ]] || return 0
+    config="$(invoke_view "query-source-testnet-v2-config" \
+        "${EXTERNAL_TESTNET_V2_POOL}" get_config)"
+    printf '%s' "${config}" | jq -e \
+        --arg oracle "${EXTERNAL_TESTNET_ORACLE}" '
+          .oracle == $oracle and .bstop_rate == 1000000 and
+          .max_positions == 8 and (.min_collateral | tostring) == "0"
+        ' >/dev/null || die "live TestnetV2 pool configuration differs from fixture"
+    reserves="$(invoke_view "query-source-testnet-v2-reserves" \
+        "${EXTERNAL_TESTNET_V2_POOL}" get_reserve_list)"
+    printf '%s' "${reserves}" | jq -e \
+        --arg xlm "$(state_value xlm_token)" \
+        --arg weth "$(state_value weth_token)" \
+        --arg wbtc "$(state_value wbtc_token)" \
+        --arg usdc "$(state_value usdc_token)" \
+        '. == [$xlm, $weth, $wbtc, $usdc]' >/dev/null ||
+        die "live TestnetV2 reserve order differs from fixture"
+    for asset in XLM wETH wBTC USDC; do
+        token="$(modeled_asset_id "${asset}")"
+        expected="$(modeled_reserve_config "${index}")"
+        invoke_view "query-source-testnet-v2-${asset}-reserve" \
+            "${EXTERNAL_TESTNET_V2_POOL}" get_reserve --asset "${token}" | jq -e \
+            --arg token "${token}" --argjson expected "${expected}" \
+            '.asset == $token and .config == $expected' >/dev/null ||
+            die "live TestnetV2 ${asset} reserve differs from fixture"
+        index=$((index + 1))
+    done
+}
+
+deploy_testnet_v21_pool() {
     local factory="$1" backstop="$2" operator="$3"
-    local xlm usdc eurc oracle pool raw name take_rate max_positions min_collateral
-    local asset token metadata label index=0 status reward_zone positions shares
-    local reserve_list available
+    local xlm usdc weth wbtc oracle pool raw name take_rate max_positions min_collateral
+    local asset token metadata label index=0 status reward_zone shares reserve_list
 
     xlm="$(state_value xlm_token)"
     usdc="$(state_value usdc_token)"
-    eurc="$(state_value eurc_token)"
-    oracle="$(state_optional fixed_pool_oracle)"
+    weth="$(state_value weth_token)"
+    wbtc="$(state_value wbtc_token)"
+    oracle="$(state_optional pool_oracle)"
     if [[ -z "${oracle}" ]]; then
-        oracle="$(deploy_wasm "deploy-fixed-v2-oracle" "${ORACLE_WASM}" "" \
+        [[ "${NETWORK_MODE}" == "local" ]] ||
+            die "recorded TestnetV2 oracle is missing"
+        oracle="$(deploy_wasm "deploy-testnet-v21-oracle" "${ORACLE_WASM}" "" \
             --admin "${operator}" \
             --base '{"Other":"USD"}' \
-            --assets "[{\"Stellar\":\"${xlm}\"},{\"Stellar\":\"${usdc}\"},{\"Stellar\":\"${eurc}\"}]" \
+            --assets "[{\"Stellar\":\"${usdc}\"},{\"Stellar\":\"${xlm}\"},{\"Stellar\":\"${weth}\"},{\"Stellar\":\"${wbtc}\"}]" \
             --decimals 7 \
             --resolution "${FIXTURE_ORACLE_RESOLUTION}")"
-        state_set "fixed_pool_oracle" "${oracle}"
+        state_set "pool_oracle" "${oracle}"
     fi
-    seed_fixed_oracle "${oracle}"
+    if [[ "${NETWORK_MODE}" == "local" ]]; then
+        seed_modeled_oracle "${oracle}"
+    fi
 
-    name="$(jq -er '.pool.name' "${FIXED_POOL_FIXTURE}")"
-    take_rate="$(jq -er '.pool.backstop_take_rate' "${FIXED_POOL_FIXTURE}")"
-    max_positions="$(jq -er '.pool.max_positions' "${FIXED_POOL_FIXTURE}")"
-    min_collateral="$(jq -er '.pool.min_collateral' "${FIXED_POOL_FIXTURE}")"
-    pool="$(state_optional fixed_pool)"
+    name="$(jq -er '.pool.name' "${TESTNET_V2_FIXTURE}")"
+    take_rate="$(jq -er '.pool.backstop_take_rate' "${TESTNET_V2_FIXTURE}")"
+    max_positions="$(jq -er '.pool.max_positions' "${TESTNET_V2_FIXTURE}")"
+    min_collateral="$(jq -er '.pool.min_collateral' "${TESTNET_V2_FIXTURE}")"
+    pool="$(state_optional pool)"
     if [[ -z "${pool}" ]]; then
-        raw="$(invoke_view "predict-fixed-v2-pool" "${factory}" deploy \
+        raw="$(invoke_view "predict-testnet-v21-pool" "${factory}" deploy \
             --admin "${operator}" \
             --name "${name}" \
-            --salt "${FIXED_POOL_SALT}" \
+            --salt "${TESTNET_V21_POOL_SALT}" \
             --oracle "${oracle}" \
             --backstop_take_rate "${take_rate}" \
             --max_positions "${max_positions}" \
             --min_collateral "${min_collateral}")"
         pool="$(normalize_scalar "${raw}")"
-        require_contract_id "${pool}" "Fixed Pool V2"
-        state_set "fixed_pool" "${pool}"
+        require_contract_id "${pool}" "TestnetV2.1 pool"
+        state_set "pool" "${pool}"
     fi
     if [[ "$(normalize_scalar "$(invoke_view \
-        "query-fixed-pool-registration-before-deploy" "${factory}" is_pool \
+        "query-testnet-v21-registration-before-deploy" "${factory}" is_pool \
         --pool_address "${pool}")")" != "true" ]]
     then
-        raw="$(invoke_transaction "deploy-fixed-v2-pool" "${factory}" deploy \
+        raw="$(invoke_transaction "deploy-testnet-v21-pool" "${factory}" deploy \
             --admin "${operator}" \
             --name "${name}" \
-            --salt "${FIXED_POOL_SALT}" \
+            --salt "${TESTNET_V21_POOL_SALT}" \
             --oracle "${oracle}" \
             --backstop_take_rate "${take_rate}" \
             --max_positions "${max_positions}" \
             --min_collateral "${min_collateral}")"
         assert_equal "${pool}" "$(normalize_scalar "${raw}")" \
-            "predicted Fixed Pool V2 address"
+            "predicted TestnetV2.1 pool address"
     fi
 
-    reserve_list="$(invoke_view "query-fixed-reserves-before-configuration" \
+    reserve_list="$(invoke_view "query-testnet-v21-reserves-before-configuration" \
         "${pool}" get_reserve_list)"
-    for asset in XLM USDC EURC; do
+    for asset in XLM wETH wBTC USDC; do
         label="$(printf '%s' "${asset}" | tr '[:upper:]' '[:lower:]')"
-        token="$(fixed_asset_id "${asset}")"
-        metadata="$(fixed_reserve_config "${index}")"
+        token="$(modeled_asset_id "${asset}")"
+        metadata="$(modeled_reserve_config "${index}")"
         if ! printf '%s' "${reserve_list}" | jq -e --arg token "${token}" \
             'index($token) != null' >/dev/null
         then
-            if invoke_view "probe-fixed-queued-reserve-${label}" \
+            if invoke_view "probe-testnet-v21-queued-reserve-${label}" \
                 "${pool}" set_reserve --asset "${token}" >/dev/null
             then
-                invoke_transaction "resume-fixed-reserve-${label}" \
+                invoke_transaction "resume-testnet-v21-reserve-${label}" \
                     "${pool}" set_reserve --asset "${token}" >/dev/null
             else
-                invoke_transaction "queue-fixed-reserve-${label}" \
+                invoke_transaction "queue-testnet-v21-reserve-${label}" \
                     "${pool}" queue_set_reserve \
                     --asset "${token}" --metadata "${metadata}" >/dev/null
-                invoke_transaction "set-fixed-reserve-${label}" \
+                invoke_transaction "set-testnet-v21-reserve-${label}" \
                     "${pool}" set_reserve --asset "${token}" >/dev/null
             fi
-            reserve_list="$(invoke_view "query-fixed-reserves-after-${label}" \
+            reserve_list="$(invoke_view "query-testnet-v21-reserves-after-${label}" \
                 "${pool}" get_reserve_list)"
         fi
         index=$((index + 1))
     done
 
-    status="$(invoke_view "query-fixed-pool-config-before-deposit" \
+    status="$(invoke_view "query-testnet-v21-config-before-on-ice" \
         "${pool}" get_config | jq -er '.status | tostring')"
     if [[ "${status}" == "6" ]]; then
-        invoke_transaction "put-fixed-pool-on-ice" \
+        invoke_transaction "put-testnet-v21-pool-on-ice" \
             "${pool}" set_status --pool_status 2 >/dev/null
     fi
-
-    shares="$(invoke_view "query-fixed-pool-backstop-before-deposit" \
-        "${backstop}" user_balance --pool "${pool}" --user "${operator}" |
-        jq -er '.shares | tostring')"
-    if (( shares == 0 )); then
-        invoke_transaction "deposit-fixed-pool-backstop" \
-            "${backstop}" deposit \
-            --from "${operator}" \
-            --pool_address "${pool}" \
-            --amount "${COMET_BACKSTOP_LP_SUPPLY}" >/dev/null
-    else
-        assert_equal "${COMET_BACKSTOP_LP_SUPPLY}" "${shares}" \
-            "existing Fixed Pool backstop shares"
-    fi
-    status="$(invoke_view "query-fixed-pool-status-before-activation" \
-        "${pool}" get_config | jq -er '.status | tostring')"
-    if [[ "${status}" != "0" ]]; then
-        invoke_transaction "activate-fixed-pool" \
-            "${pool}" set_status --pool_status 0 >/dev/null
-    fi
-    reward_zone="$(invoke_view "query-fixed-reward-zone-before-add" \
-        "${backstop}" reward_zone)"
-    if ! printf '%s' "${reward_zone}" | jq -e --arg pool "${pool}" \
-        'index($pool) != null' >/dev/null
-    then
-        invoke_transaction "add-fixed-pool-to-reward-zone" \
-            "${backstop}" add_reward \
-            --to_add "${pool}" --to_remove null >/dev/null
-    fi
-    invoke_transaction "configure-fixed-pool-emissions" \
-        "${pool}" set_emissions_config \
-        --res_emission_metadata "$(jq -c '.pool.emissions' "${FIXED_POOL_FIXTURE}")" \
-        >/dev/null
-
-    positions="$(invoke_view "query-fixed-pool-usdc-supply-before-seed" \
-        "${pool}" get_positions --address "${operator}")"
-    shares="$(printf '%s' "${positions}" | jq -er \
-        '(.supply["1"] // "0") | tostring')"
-    if (( shares == 0 )); then
-        available="$(normalize_scalar "$(invoke_view \
-            "query-fixed-pool-usdc-available" "${usdc}" balance \
-            --id "${operator}")")"
-        if (( available < FIXED_POOL_USDC_SUPPLY )); then
-            invoke_transaction "mint-fixed-pool-usdc-supply" \
-                "${usdc}" mint --to "${operator}" \
-                --amount "$((FIXED_POOL_USDC_SUPPLY - available))" >/dev/null
-        fi
-        invoke_transaction "seed-fixed-pool-usdc-supply" \
-            "${pool}" submit \
-            --from "${operator}" --spender "${operator}" --to "${operator}" \
-            --requests "[{\"address\":\"${usdc}\",\"amount\":\"${FIXED_POOL_USDC_SUPPLY}\",\"request_type\":0}]" \
-            >/dev/null
-    else
-        assert_equal "${FIXED_POOL_USDC_SUPPLY}" "${shares}" \
-            "existing Fixed Pool USDC supply"
-    fi
-
     assert_equal "true" "$(normalize_scalar "$(invoke_view \
-        "verify-fixed-pool-factory-registration" "${factory}" is_pool \
-        --pool_address "${pool}")")" "Fixed Pool factory registration"
+        "verify-testnet-v21-factory-registration" "${factory}" is_pool \
+        --pool_address "${pool}")")" "TestnetV2.1 factory registration"
     assert_equal "${operator}" "$(normalize_scalar "$(invoke_view \
-        "verify-fixed-pool-admin" "${pool}" get_admin)")" "Fixed Pool admin"
-    assert_equal "0" "$(invoke_view "verify-fixed-pool-config" \
-        "${pool}" get_config | jq -er '.status | tostring')" "Fixed Pool status"
-    invoke_view "verify-fixed-pool-config-fields" "${pool}" get_config | jq -e \
+        "verify-testnet-v21-admin" "${pool}" get_admin)")" "TestnetV2.1 admin"
+    assert_equal "2" "$(invoke_view "verify-testnet-v21-status" \
+        "${pool}" get_config | jq -er '.status | tostring')" "TestnetV2.1 status"
+    invoke_view "verify-testnet-v21-config" "${pool}" get_config | jq -e \
         --arg oracle "${oracle}" \
         --argjson take_rate "${take_rate}" \
         --argjson max_positions "${max_positions}" \
@@ -1031,192 +855,146 @@ deploy_fixed_pool() {
           .bstop_rate == $take_rate and
           .max_positions == $max_positions and
           (.min_collateral | tostring) == $min_collateral
-        ' >/dev/null || die "Fixed Pool config differs from fixture"
-    invoke_view "verify-fixed-pool-reserves" "${pool}" get_reserve_list | jq -e \
-        --arg xlm "${xlm}" --arg usdc "${usdc}" --arg eurc "${eurc}" \
-        '. == [$xlm, $usdc, $eurc]' >/dev/null ||
-        die "Fixed Pool reserve order differs from [XLM, USDC, EURC]"
-    reward_zone="$(invoke_view "verify-fixed-pool-reward-zone" \
+        ' >/dev/null || die "TestnetV2.1 config differs from fixture"
+    invoke_view "verify-testnet-v21-reserves" "${pool}" get_reserve_list | jq -e \
+        --arg xlm "${xlm}" --arg weth "${weth}" --arg wbtc "${wbtc}" --arg usdc "${usdc}" \
+        '. == [$xlm, $weth, $wbtc, $usdc]' >/dev/null ||
+        die "TestnetV2.1 reserve order differs from TestnetV2"
+    reward_zone="$(invoke_view "verify-testnet-v21-reward-zone-empty" \
         "${backstop}" reward_zone)"
-    printf '%s' "${reward_zone}" | jq -e --arg pool "${pool}" \
-        'index($pool) != null' >/dev/null || die "Fixed Pool is absent from reward zone"
-    shares="$(invoke_view "verify-fixed-pool-backstop-shares" \
-        "${backstop}" user_balance --pool "${pool}" --user "${operator}" |
+    printf '%s' "${reward_zone}" | jq -e 'length == 0' >/dev/null ||
+        die "new V2.1 backstop reward zone is not empty"
+    shares="$(invoke_view "verify-testnet-v21-backstop-unfunded" \
+        "${backstop}" user_balance --pool "${pool}" --user "${FUNDING_WALLET}" |
         jq -er '.shares | tostring')"
-    assert_equal "${COMET_BACKSTOP_LP_SUPPLY}" "${shares}" \
-        "Fixed Pool backstop shares"
-    positions="$(invoke_view "verify-fixed-pool-usdc-supply" \
-        "${pool}" get_positions --address "${operator}")"
-    assert_equal "${FIXED_POOL_USDC_SUPPLY}" \
-        "$(printf '%s' "${positions}" | jq -er '(.supply["1"] // "0") | tostring')" \
-        "Fixed Pool USDC supply"
-    state_set "fixed_pool_backstop_deposit" "${COMET_BACKSTOP_LP_SUPPLY}"
-    state_set "fixed_pool_usdc_supply" "${FIXED_POOL_USDC_SUPPLY}"
-    state_set "fixed_pool_emissions" \
-        "$(jq -c '.pool.emissions' "${FIXED_POOL_FIXTURE}")"
+    assert_equal "0" "${shares}" "TestnetV2.1 backstop shares"
+    state_set "pool_backstop_funded" "false"
+    state_set "pool_activation_pending" "true"
+    state_set "backfill_enabled" "false"
+    state_set "backfill_active" "false"
+    state_set "emissions_enabled" "false"
 }
 
-require_external_blnd() {
-    local legacy_blnd="$1"
-    require_contract_id "${legacy_blnd}" "external legacy BLND"
+require_existing_blnd() {
+    local blnd="$1" issuer="$2" resolved
+    require_contract_id "${blnd}" "existing BLND"
+    resolved="$(resolve_asset "resolve-existing-blnd" "BLND:${issuer}")"
+    assert_equal "${blnd}" "${resolved}" "existing BLND SAC address"
     assert_equal "7" "$(normalize_scalar "$(invoke_view \
-        "query-external-blnd-decimals" "${legacy_blnd}" decimals)")" \
-        "external legacy BLND decimals"
+        "query-existing-blnd-decimals" "${blnd}" decimals)")" \
+        "existing BLND decimals"
     assert_equal "BLND" "$(normalize_scalar "$(invoke_view \
-        "query-external-blnd-symbol" "${legacy_blnd}" symbol)")" \
-        "external legacy BLND symbol"
+        "query-existing-blnd-symbol" "${blnd}" symbol)")" \
+        "existing BLND symbol"
 }
 
-fund_testnet_wallet_assets() {
-    local blnt="$1" blnt_issuer="$2" usdc="$3" eurc="$4"
-    [[ "${NETWORK_MODE}" == "testnet" ]] || return
-    require_funding_wallet_access
-    ensure_wallet_trustline "blnt" BLNT "${blnt_issuer}"
-    ensure_wallet_trustline "usdc" USDC "$(state_value operator)"
-    ensure_wallet_trustline "eurc" EURC "$(state_value operator)"
-    ensure_wallet_token_funding \
-        "blnt" "${blnt}" "${BLNT_ISSUER_IDENTITY}" "${WALLET_BLNT_FUNDING}"
-    ensure_wallet_token_funding \
-        "usdc" "${usdc}" "${OPERATOR_IDENTITY}" "${WALLET_USDC_FUNDING}"
-    ensure_wallet_token_funding \
-        "eurc" "${eurc}" "${OPERATOR_IDENTITY}" "${WALLET_EURC_FUNDING}"
-    state_set "funding_wallet" "${FUNDING_WALLET}"
-    fund_testnet_wallet_xlm
+resolve_testnet_emitter() {
+    local blnd="$1" emitter recipient
+    emitter="$(normalize_scalar "$(invoke_view \
+        "query-existing-blnd-admin" "${blnd}" admin)")"
+    require_contract_id "${emitter}" "existing BLND emitter"
+    recipient="$(normalize_scalar "$(invoke_view \
+        "query-existing-emitter-backstop" "${emitter}" get_backstop)")"
+    assert_equal "${EXTERNAL_BLEND_BACKSTOP}" "${recipient}" \
+        "existing emitter backstop"
+    printf '%s\n' "${emitter}"
 }
 
-verify_fixed_pool_deployment() {
-    local operator factory backstop oracle pool xlm usdc eurc config reserves reward shares
-    local asset token expected reserve prices emissions_raw emissions_actual emissions_expected index=0
+verify_testnet_v21_pool_deployment() {
+    local operator factory backstop oracle pool xlm usdc weth wbtc config reserves reward shares
+    local asset token expected reserve activation_pending expected_status index=0
+    local emissions_raw emissions_actual emissions_expected
     operator="$(state_value operator)"
     factory="$(state_value pool_factory)"
     backstop="$(state_value backstop)"
-    oracle="$(state_value fixed_pool_oracle)"
-    pool="$(state_value fixed_pool)"
+    oracle="$(state_value pool_oracle)"
+    pool="$(state_value pool)"
     xlm="$(state_value xlm_token)"
     usdc="$(state_value usdc_token)"
-    eurc="$(state_value eurc_token)"
+    weth="$(state_value weth_token)"
+    wbtc="$(state_value wbtc_token)"
+    activation_pending="$(state_optional pool_activation_pending)"
+    activation_pending="${activation_pending:-true}"
+    if [[ "${activation_pending}" == "true" ]]; then
+        expected_status=2
+    else
+        expected_status=0
+    fi
     assert_equal "true" "$(normalize_scalar "$(invoke_view \
-        "query-fixed-pool-registration" "${factory}" is_pool \
+        "query-testnet-v21-pool-registration" "${factory}" is_pool \
         --pool_address "${pool}")")" \
-        "Fixed Pool factory registration"
+        "TestnetV2.1 factory registration"
     assert_equal "${operator}" "$(normalize_scalar "$(invoke_view \
-        "query-fixed-pool-admin" "${pool}" get_admin)")" "Fixed Pool admin"
-    config="$(invoke_view "query-fixed-pool-config" "${pool}" get_config)"
+        "query-testnet-v21-pool-admin" "${pool}" get_admin)")" "TestnetV2.1 admin"
+    config="$(invoke_view "query-testnet-v21-pool-config" "${pool}" get_config)"
     printf '%s' "${config}" | jq -e \
         --arg oracle "${oracle}" \
-        --argjson take_rate "$(jq -er '.pool.backstop_take_rate' "${FIXED_POOL_FIXTURE}")" \
-        --argjson max_positions "$(jq -er '.pool.max_positions' "${FIXED_POOL_FIXTURE}")" \
-        --arg min_collateral "$(jq -er '.pool.min_collateral | tostring' "${FIXED_POOL_FIXTURE}")" '
-          .oracle == $oracle and .status == 0 and
+        --argjson take_rate "$(jq -er '.pool.backstop_take_rate' "${TESTNET_V2_FIXTURE}")" \
+        --argjson max_positions "$(jq -er '.pool.max_positions' "${TESTNET_V2_FIXTURE}")" \
+        --argjson expected_status "${expected_status}" \
+        --arg min_collateral "$(jq -er '.pool.min_collateral | tostring' "${TESTNET_V2_FIXTURE}")" '
+          .oracle == $oracle and .status == $expected_status and
           .bstop_rate == $take_rate and .max_positions == $max_positions and
           (.min_collateral | tostring) == $min_collateral
-        ' >/dev/null || die "Fixed Pool config differs from the Fixed Pool V2 fixture"
-    reserves="$(invoke_view "query-fixed-pool-reserves" "${pool}" get_reserve_list)"
+        ' >/dev/null || die "TestnetV2.1 pool config differs from fixture"
+    reserves="$(invoke_view "query-testnet-v21-pool-reserves" "${pool}" get_reserve_list)"
     printf '%s' "${reserves}" | jq -e \
-        --arg xlm "${xlm}" --arg usdc "${usdc}" --arg eurc "${eurc}" \
-        '. == [$xlm, $usdc, $eurc]' >/dev/null ||
-        die "Fixed Pool reserve order differs from [XLM, USDC, EURC]"
-    for asset in XLM USDC EURC; do
-        token="$(fixed_asset_id "${asset}")"
-        expected="$(fixed_reserve_config "${index}")"
-        reserve="$(invoke_view "query-fixed-pool-${asset}-reserve" \
+        --arg xlm "${xlm}" --arg weth "${weth}" --arg wbtc "${wbtc}" --arg usdc "${usdc}" \
+        '. == [$xlm, $weth, $wbtc, $usdc]' >/dev/null ||
+        die "TestnetV2.1 reserve order differs from TestnetV2"
+    for asset in XLM wETH wBTC USDC; do
+        token="$(modeled_asset_id "${asset}")"
+        expected="$(modeled_reserve_config "${index}")"
+        reserve="$(invoke_view "query-testnet-v21-${asset}-reserve" \
             "${pool}" get_reserve --asset "${token}")"
         printf '%s' "${reserve}" | jq -e \
             --arg token "${token}" --argjson expected "${expected}" \
             '.asset == $token and .config == $expected' >/dev/null ||
-            die "Fixed Pool ${asset} reserve configuration differs from fixture"
+            die "TestnetV2.1 ${asset} reserve differs from TestnetV2"
         index=$((index + 1))
     done
-    emissions_raw="$(capture "query-fixed-pool-emissions" stellar_cli contract read \
-        --id "${pool}" --key PoolEmis --durability persistent --output string \
-        --rpc-url "${RPC_URL}" --network-passphrase "${NETWORK_PASSPHRASE}")"
-    emissions_actual="${emissions_raw#*,\"}"
-    emissions_actual="${emissions_actual%\",*}"
-    emissions_actual="${emissions_actual//\"\"/\"}"
-    emissions_actual="$(printf '%s' "${emissions_actual}" | jq -cS .)" ||
-        die "unable to parse Fixed Pool emissions"
-    emissions_expected="$(jq -cS '
-      .pool.emissions |
-      map({key: ((.res_index * 2 + .res_type) | tostring), value: .share}) |
-      from_entries
-    ' "${FIXED_POOL_FIXTURE}")"
-    assert_equal "${emissions_expected}" "${emissions_actual}" \
-        "Fixed Pool emission allocations"
-    reward="$(invoke_view "query-fixed-pool-reward-zone" "${backstop}" reward_zone)"
-    printf '%s' "${reward}" | jq -e --arg pool "${pool}" \
-        'index($pool) != null' >/dev/null || die "Fixed Pool is absent from reward zone"
-    shares="$(invoke_view "query-fixed-pool-backstop-balance" \
-        "${backstop}" user_balance --pool "${pool}" --user "${operator}" |
-        jq -er '.shares | tostring')"
-    assert_equal "${COMET_BACKSTOP_LP_SUPPLY}" "${shares}" \
-        "Fixed Pool backstop shares"
-    assert_equal "${operator}" "$(normalize_scalar "$(invoke_view \
-        "query-fixed-oracle-admin" "${oracle}" admin)")" "Fixed oracle admin"
+    reward="$(invoke_view "query-testnet-v21-reward-zone" "${backstop}" reward_zone)"
+    if [[ "${activation_pending}" == "true" ]]; then
+        printf '%s' "${reward}" | jq -e 'length == 0' >/dev/null ||
+            die "new V2.1 reward zone is not empty"
+    else
+        printf '%s' "${reward}" | jq -e --arg pool "${pool}" \
+            'length == 1 and .[0] == $pool' >/dev/null ||
+            die "TestnetV2.1 is not the sole reward-zone member"
+        emissions_raw="$(capture "query-testnet-v21-pool-emissions" \
+            stellar_cli contract read \
+            --id "${pool}" --key PoolEmis --durability persistent --output string \
+            --rpc-url "${RPC_URL}" --network-passphrase "${NETWORK_PASSPHRASE}")"
+        emissions_actual="${emissions_raw#*,\"}"
+        emissions_actual="${emissions_actual%\",*}"
+        emissions_actual="${emissions_actual//\"\"/\"}"
+        emissions_actual="$(printf '%s' "${emissions_actual}" | jq -cS .)" ||
+            die "unable to parse TestnetV2.1 emissions"
+        emissions_expected="$(jq -cS '
+          .pool.emissions |
+          map({key: ((.res_index * 2 + .res_type) | tostring), value: .share}) |
+          from_entries
+        ' "${TESTNET_V2_FIXTURE}")"
+        assert_equal "${emissions_expected}" "${emissions_actual}" \
+            "TestnetV2.1 emission allocations"
+    fi
+    shares="$(invoke_view "query-testnet-v21-backstop-balance" \
+        "${backstop}" pool_data --pool "${pool}" | jq -er '.shares | tostring')"
+    if [[ "${activation_pending}" != "true" ]]; then
+        [[ "${shares}" =~ ^[1-9][0-9]*$ ]] ||
+            die "TestnetV2.1 funding-wallet backstop shares are not positive"
+    fi
     assert_equal "7" "$(normalize_scalar "$(invoke_view \
-        "query-fixed-oracle-decimals" "${oracle}" decimals)")" "Fixed oracle decimals"
+        "query-testnet-v21-oracle-decimals" "${oracle}" decimals)")" \
+        "TestnetV2.1 oracle decimals"
     assert_equal "${FIXTURE_ORACLE_RESOLUTION}" "$(normalize_scalar "$(invoke_view \
-        "query-fixed-oracle-resolution" "${oracle}" resolution)")" \
-        "Fixed oracle resolution"
-    invoke_view "query-fixed-oracle-assets" "${oracle}" assets | jq -e \
-        --arg xlm "${xlm}" --arg usdc "${usdc}" --arg eurc "${eurc}" \
-        '. == [{Stellar:$xlm},{Stellar:$usdc},{Stellar:$eurc}]' >/dev/null ||
-        die "Fixed oracle assets differ from [XLM, USDC, EURC]"
-    for asset in XLM USDC EURC; do
-        token="$(fixed_asset_id "${asset}")"
-        expected="$(jq -er --arg asset "${asset}" '.prices[$asset] | tostring' \
-            "${FIXED_POOL_FIXTURE}")"
-        prices="$(invoke_view "query-fixed-oracle-${asset}-prices" \
-            "${oracle}" prices --asset "{\"Stellar\":\"${token}\"}" \
-            --records "${FIXTURE_ORACLE_RECORDS}")"
-        printf '%s' "${prices}" | jq -e \
-            --arg expected "${expected}" \
-            --argjson records "${FIXTURE_ORACLE_RECORDS}" '
-              length == $records and
-              all(.[]; (.price | tostring) == $expected)
-            ' >/dev/null || die "Fixed oracle ${asset} history differs from fixture"
-    done
-}
-
-verify_wallet_funding() {
-    local token expected label balance wallet_account xlm_balance
-    [[ "${NETWORK_MODE}" == "testnet" ]] || return
-    for token_spec in \
-        "$(state_value blnt_token):${WALLET_BLNT_FUNDING}:blnt" \
-        "$(state_value usdc_token):${WALLET_USDC_FUNDING}:usdc" \
-        "$(state_value eurc_token):${WALLET_EURC_FUNDING}:eurc"
-    do
-        IFS=: read -r token expected label <<<"${token_spec}"
-        balance="$(normalize_scalar "$(invoke_view \
-            "query-wallet-${label}-funding" "${token}" balance \
-            --id "${FUNDING_WALLET}")")"
-        assert_equal "${expected}" "${balance}" "wallet ${label} balance"
-    done
-    wallet_account="$(capture "query-funded-wallet" \
-        curl --fail --silent --show-error --max-time 10 \
-        "${HORIZON_URL}/accounts/${FUNDING_WALLET}")"
-    xlm_balance="$(printf '%s' "${wallet_account}" | jq -er '
-      def raw:
-        split(".") as $parts |
-        (($parts[0] | tonumber) * 10000000) +
-        (((($parts[1] // "") + "0000000")[0:7]) | tonumber);
-      .balances[] | select(.asset_type == "native") | .balance | raw | tostring
-    ')"
-    (( xlm_balance >= WALLET_XLM_FUNDING )) ||
-        die "wallet native XLM balance is below the requested funding amount"
-}
-
-verify_wallet_funding_record() {
-    [[ "${NETWORK_MODE}" == "testnet" ]] || return
-    assert_equal "${FUNDING_WALLET}" "$(state_value funding_wallet)" \
-        "recorded funding wallet"
-    assert_equal "${WALLET_BLNT_FUNDING}" "$(state_value wallet_blnt_funded)" \
-        "recorded wallet BLNT funding"
-    assert_equal "${WALLET_USDC_FUNDING}" "$(state_value wallet_usdc_funded)" \
-        "recorded wallet USDC funding"
-    assert_equal "${WALLET_EURC_FUNDING}" "$(state_value wallet_eurc_funded)" \
-        "recorded wallet EURC funding"
-    assert_equal "${WALLET_XLM_FUNDING}" "$(state_value wallet_xlm_funded)" \
-        "recorded wallet XLM funding"
+        "query-testnet-v21-oracle-resolution" "${oracle}" resolution)")" \
+        "TestnetV2.1 oracle resolution"
+    invoke_view "query-testnet-v21-oracle-assets" "${oracle}" assets | jq -e \
+        --arg xlm "${xlm}" --arg usdc "${usdc}" \
+        --arg weth "${weth}" --arg wbtc "${wbtc}" \
+        '. == [{Stellar:$usdc},{Stellar:$xlm},{Stellar:$weth},{Stellar:$wbtc}]' \
+        >/dev/null || die "TestnetV2.1 oracle assets differ from TestnetV2"
 }
 
 invoke_transaction_as() {
@@ -1238,14 +1016,25 @@ invoke_transaction() {
 }
 
 invoke_view() {
-    local label="$1" contract="$2" function="$3"
+    local label="$1" contract="$2" function="$3" output status attempt
     shift 3
-    capture "${label}" stellar_cli contract invoke \
-        --id "${contract}" \
-        --source-account "${OPERATOR_IDENTITY}" \
-        --rpc-url "${RPC_URL}" \
-        --network-passphrase "${NETWORK_PASSPHRASE}" \
-        --send no --cost -- "${function}" "$@"
+    for attempt in 1 2 3 4 5; do
+        set +e
+        output="$(capture "${label}" stellar_cli contract invoke \
+            --id "${contract}" \
+            --source-account "${OPERATOR_IDENTITY}" \
+            --rpc-url "${RPC_URL}" \
+            --network-passphrase "${NETWORK_PASSPHRASE}" \
+            --send no --cost -- "${function}" "$@")"
+        status=$?
+        set -e
+        if (( status == 0 )); then
+            printf '%s' "${output}"
+            return 0
+        fi
+        (( attempt == 5 )) || sleep 2
+    done
+    return "${status}"
 }
 
 invoke_probe() {
@@ -1257,6 +1046,48 @@ invoke_probe() {
         --rpc-url "${RPC_URL}" \
         --network-passphrase "${NETWORK_PASSPHRASE}" \
         --send no --cost -- "${function}" "$@"
+}
+
+ensure_backstop_emissions_checkpoint() {
+    local backstop="$1" output
+    if output="$(capture_combined "advance-backstop-emissions" \
+        stellar_cli contract invoke \
+        --id "${backstop}" \
+        --source-account "${OPERATOR_IDENTITY}" \
+        --rpc-url "${RPC_URL}" \
+        --network-passphrase "${NETWORK_PASSPHRASE}" \
+        --cost -- distribute)"
+    then
+        note "V2.1 backstop emissions checkpoint advanced."
+        return
+    fi
+    if [[ "${output}" =~ \#1000([^0-9]|$) ]]; then
+        note "V2.1 backstop emissions checkpoint was already recent."
+        return
+    fi
+    die "unable to advance the V2.1 backstop emissions checkpoint: ${output}"
+}
+
+ensure_backfill_drop() {
+    local backstop="$1" output
+    if [[ "$(state_optional backfill_drop_completed)" == "true" ]]; then
+        return
+    fi
+    if output="$(capture_combined "complete-v2-backfill-drop" \
+        stellar_cli contract invoke \
+        --id "${backstop}" \
+        --source-account "${OPERATOR_IDENTITY}" \
+        --rpc-url "${RPC_URL}" \
+        --network-passphrase "${NETWORK_PASSPHRASE}" \
+        --cost -- drop)"
+    then
+        note "V2.1 legacy backfill drop completed."
+    elif [[ "${output}" =~ \#1101([^0-9]|$) ]]; then
+        note "V2.1 legacy backfill drop was already completed."
+    else
+        die "unable to complete the V2.1 legacy backfill drop: ${output}"
+    fi
+    state_set "backfill_drop_completed" "true"
 }
 
 predict_contract_id() {
@@ -1308,127 +1139,55 @@ verify_non_clawbackable_sac_balance() {
     assert_equal "false" "${clawback}" "${label} clawback flag"
 }
 
-require_clean_blnt_issuer() {
-    local issuer="$1" account
-    account="$(capture "query-blnt-issuer-before-deploy" \
-        curl --fail --silent --show-error --max-time 10 \
-        "${HORIZON_URL}/accounts/${issuer}")"
-    jq -e --arg issuer "${issuer}" '
-      .account_id == $issuer and
-      .thresholds.low_threshold == 0 and
-      .thresholds.med_threshold == 0 and
-      .thresholds.high_threshold == 0 and
-      (.signers | length) == 1 and
-      .signers[0].key == $issuer and
-      .signers[0].weight == 1 and
-      (.home_domain // "") == "" and
-      .flags.auth_required == false and
-      .flags.auth_revocable == false and
-      .flags.auth_immutable == false and
-      .flags.auth_clawback_enabled == false
-    ' <<<"${account}" >/dev/null ||
-        die "BLNT issuer is not a clean, sole-signer account"
-}
-
-verify_blnt_issuer_home_domain() {
-    local issuer="$1" expected="$2" account domain_matches=false
-    for _ in {1..30}; do
-        if account="$(capture "query-blnt-issuer-home-domain" \
-            curl --fail --silent --show-error --max-time 10 \
-            "${HORIZON_URL}/accounts/${issuer}")" &&
-            jq -e --arg expected "${expected}" \
-                '.home_domain == $expected' <<<"${account}" >/dev/null 2>&1
-        then
-            domain_matches=true
-            break
-        fi
-        sleep 1
-    done
-    [[ "${domain_matches}" == "true" ]] ||
-        die "BLNT issuer home domain does not match ${expected}"
-}
-
-verify_locked_blnt_issuer() {
-    local issuer="$1" home_domain="$2" account issuer_locked=false
-    for _ in {1..30}; do
-        if account="$(capture "query-locked-blnt-issuer" \
-            curl --fail --silent --show-error --max-time 10 \
-            "${HORIZON_URL}/accounts/${issuer}")" &&
-            jq -e --arg issuer "${issuer}" \
-            --arg home_domain "${home_domain}" \
-            --argjson threshold "${BLNT_ISSUER_THRESHOLD}" '
-              .account_id == $issuer and
-              .thresholds.low_threshold == $threshold and
-              .thresholds.med_threshold == $threshold and
-              .thresholds.high_threshold == $threshold and
-              (.signers | length) == 1 and
-              .signers[0].key == $issuer and
-              .signers[0].weight == 0 and
-              (.home_domain // "") == $home_domain and
-              .flags.auth_required == false and
-              .flags.auth_revocable == false and
-              .flags.auth_immutable == false and
-              .flags.auth_clawback_enabled == false
-            ' <<<"${account}" >/dev/null 2>&1
-        then
-            issuer_locked=true
-            break
-        fi
-        sleep 1
-    done
-    [[ "${issuer_locked}" == "true" ]] ||
-        die "BLNT issuer account is not irreversibly locked"
-}
-
 verify_comet() {
-    local comet="$1" controller="$2" blnt="$3" usdc="$4"
+    local comet="$1" controller="$2" blnd="$3" usdc="$4"
     local verify_initial_balances="${5:-true}"
-    local tokens blnt_weight usdc_weight total_supply blnt_balance usdc_balance
-    local blnt_decimals usdc_decimals comet_decimals
+    local tokens blnd_weight usdc_weight total_supply blnd_balance usdc_balance
+    local blnd_decimals usdc_decimals comet_decimals
     local controller_account controller_locked=false
-    [[ "${comet}" != "${blnt}" && "${comet}" != "${usdc}" && "${blnt}" != "${usdc}" ]] ||
-        die "Comet, BLNT, and USDC addresses must be distinct"
-    blnt_decimals="$(normalize_scalar "$(invoke_view \
-        "query-blnt-decimals" "${blnt}" decimals)")"
+    [[ "${comet}" != "${blnd}" && "${comet}" != "${usdc}" && "${blnd}" != "${usdc}" ]] ||
+        die "Comet, BLND, and USDC addresses must be distinct"
+    blnd_decimals="$(normalize_scalar "$(invoke_view \
+        "query-blnd-decimals" "${blnd}" decimals)")"
     usdc_decimals="$(normalize_scalar "$(invoke_view \
         "query-usdc-decimals" "${usdc}" decimals)")"
     comet_decimals="$(normalize_scalar "$(invoke_view \
         "query-comet-decimals" "${comet}" decimals)")"
-    assert_equal "7" "${blnt_decimals}" "BLNT decimals"
+    assert_equal "7" "${blnd_decimals}" "BLND decimals"
     assert_equal "7" "${usdc_decimals}" "USDC decimals"
     assert_equal "7" "${comet_decimals}" "Comet LP decimals"
     tokens="$(invoke_view "query-comet-tokens" "${comet}" get_tokens)"
     printf '%s' "${tokens}" | jq -e \
-        --arg blnt "${blnt}" --arg usdc "${usdc}" '. == [$blnt, $usdc]' >/dev/null ||
-        die "Comet token pair is not [BLNT, USDC]"
-    blnt_weight="$(normalize_scalar "$(invoke_view \
-        "query-comet-blnt-weight" "${comet}" get_normalized_weight --token "${blnt}")")"
+        --arg blnd "${blnd}" --arg usdc "${usdc}" '. == [$blnd, $usdc]' >/dev/null ||
+        die "Comet token pair is not [BLND, USDC]"
+    blnd_weight="$(normalize_scalar "$(invoke_view \
+        "query-comet-blnd-weight" "${comet}" get_normalized_weight --token "${blnd}")")"
     usdc_weight="$(normalize_scalar "$(invoke_view \
         "query-comet-usdc-weight" "${comet}" get_normalized_weight --token "${usdc}")")"
-    assert_equal "${COMET_BLNT_WEIGHT}" "${blnt_weight}" "Comet BLNT weight"
+    assert_equal "${COMET_BLND_WEIGHT}" "${blnd_weight}" "Comet BLND weight"
     assert_equal "${COMET_USDC_WEIGHT}" "${usdc_weight}" "Comet USDC weight"
     assert_equal "${controller}" "$(normalize_scalar "$(invoke_view \
         "query-comet-controller" "${comet}" get_controller)")" "Comet controller"
     total_supply="$(normalize_scalar "$(invoke_view \
         "query-comet-total-supply" "${comet}" get_total_supply)")"
-    blnt_balance="$(normalize_scalar "$(invoke_view \
-        "query-comet-blnt-balance" "${comet}" get_balance --token "${blnt}")")"
+    blnd_balance="$(normalize_scalar "$(invoke_view \
+        "query-comet-blnd-balance" "${comet}" get_balance --token "${blnd}")")"
     usdc_balance="$(normalize_scalar "$(invoke_view \
         "query-comet-usdc-balance" "${comet}" get_balance --token "${usdc}")")"
     if [[ "${verify_initial_balances}" == "true" ]]; then
-        assert_equal "${COMET_BACKSTOP_LP_SUPPLY}" "${total_supply}" "Comet LP supply"
-        assert_equal "${COMET_FINAL_BLNT_BALANCE}" "${blnt_balance}" "Comet BLNT reserve"
-        assert_equal "${COMET_FINAL_USDC_BALANCE}" "${usdc_balance}" "Comet USDC reserve"
+        assert_equal "${COMET_INITIAL_LP_SUPPLY}" "${total_supply}" "Comet LP supply"
+        assert_equal "${COMET_BLND_BALANCE}" "${blnd_balance}" "Comet BLND reserve"
+        assert_equal "${COMET_USDC_BALANCE}" "${usdc_balance}" "Comet USDC reserve"
     else
         [[ "${total_supply}" =~ ^[1-9][0-9]*$ ]] ||
             die "Comet LP supply is not positive"
-        [[ "${blnt_balance}" =~ ^[1-9][0-9]*$ ]] ||
-            die "Comet BLNT reserve is not positive"
+        [[ "${blnd_balance}" =~ ^[1-9][0-9]*$ ]] ||
+            die "Comet BLND reserve is not positive"
         [[ "${usdc_balance}" =~ ^[1-9][0-9]*$ ]] ||
             die "Comet USDC reserve is not positive"
     fi
     verify_non_clawbackable_sac_balance \
-        "verify-comet-blnt-custody" "${blnt}" "${comet}"
+        "verify-comet-blnd-custody" "${blnd}" "${comet}"
     verify_non_clawbackable_sac_balance \
         "verify-comet-usdc-custody" "${usdc}" "${comet}"
 
@@ -1457,125 +1216,80 @@ verify_comet() {
 
 verify_deployment() {
     local verify_initial_balances="${1:-true}"
-    local legacy_blnd blnt blnt_issuer usdc emitter backfill comet backstop
-    local backfill_balance total_allocated backfill_allocated grants remaining
-    legacy_blnd="$(state_value legacy_blnd_token)"
-    blnt="$(state_value blnt_token)"
-    blnt_issuer="$(state_value blnt_issuer)"
+    local blnd usdc emitter comet backstop recipient initial_recipient emissions_enabled
+    local lp_recipient lp_balance
+    blnd="$(state_value blnd_token)"
     usdc="$(state_value usdc_token)"
     emitter="$(state_value emitter)"
-    backfill="$(state_value backfill)"
-    comet="$(state_value comet_blnt_usdc)"
+    comet="$(state_value comet_blnd_usdc)"
     backstop="$(state_value backstop)"
+    initial_recipient="$(state_value emitter_initial_backstop)"
+    emissions_enabled="$(state_optional emissions_enabled)"
+    emissions_enabled="${emissions_enabled:-false}"
 
-    if [[ "${NETWORK_MODE}" == "testnet" ]]; then
-        require_external_blnd "${legacy_blnd}"
-    fi
-    verify_locked_blnt_issuer "${blnt_issuer}" "$(state_value blnt_home_domain)"
+    require_existing_blnd "${blnd}" "$(state_value blnd_issuer)"
     verify_comet "${comet}" "$(state_value comet_controller)" \
-        "${blnt}" "${usdc}" "${verify_initial_balances}"
+        "${blnd}" "${usdc}" "${verify_initial_balances}"
     assert_equal "${emitter}" "$(normalize_scalar "$(invoke_view \
-        "query-blnt-admin" "${blnt}" admin)")" "BLNT administrator"
-    assert_equal "${backstop}" "$(normalize_scalar "$(invoke_view \
-        "query-emitter-backstop" "${emitter}" get_backstop)")" "emitter backstop"
+        "query-blnd-admin" "${blnd}" admin)")" "BLND administrator"
+    recipient="$(normalize_scalar "$(invoke_view \
+        "query-emitter-backstop" "${emitter}" get_backstop)")"
+    if [[ "${emissions_enabled}" == "true" ]]; then
+        assert_equal "${backstop}" "${recipient}" "emitter backstop"
+    elif [[ "${recipient}" != "${initial_recipient}" && "${recipient}" != "${backstop}" ]]; then
+        die "emitter targets neither its recorded initial backstop nor V2.1"
+    fi
     assert_equal "${comet}" "$(normalize_scalar "$(invoke_view \
         "query-backstop-token" "${backstop}" backstop_token)")" "backstop LP token"
-    assert_equal "${legacy_blnd}" "$(normalize_scalar "$(invoke_view \
-        "query-backfill-legacy-token" "${backfill}" get_legacy_blnd_token)")" \
-        "backfill legacy BLND binding"
-    assert_equal "${blnt}" "$(normalize_scalar "$(invoke_view \
-        "query-backfill-blnt-token" "${backfill}" get_blnt_token)")" \
-        "backfill BLNT binding"
-
-    backfill_balance="$(normalize_scalar "$(invoke_view \
-        "query-backfill-balance" "${blnt}" balance --id "${backfill}")")"
-    total_allocated="$(normalize_scalar "$(invoke_view \
-        "query-total-allocated" "${backfill}" get_total_allocated)")"
-    backfill_allocated="$(normalize_scalar "$(invoke_view \
-        "query-backfill-allocated" "${backfill}" get_backfill_allocated)")"
-    grants="$(normalize_scalar "$(invoke_view \
-        "query-grant-allocated" "${backfill}" get_grant_allocated)")"
-    remaining="$(normalize_scalar "$(invoke_view \
-        "query-swap-capacity" "${backfill}" get_remaining_swap_capacity)")"
-    assert_equal "${BACKFILL_ALLOCATION}" "${total_allocated}" "total claim allocation"
-    assert_equal "${BACKFILL_ALLOCATION}" "${backfill_allocated}" "backfill allocation"
-    assert_equal "${GRANT_ALLOCATION}" "${grants}" "contributor grant allocation"
     if [[ "${verify_initial_balances}" == "true" ]]; then
-        assert_equal "${BACKFILL_PREMINT}" "${backfill_balance}" "backfill BLNT custody"
-        assert_equal "${SWAP_CAPACITY}" "${remaining}" "conversion reserve"
-    else
-        [[ "${backfill_balance}" =~ ^[0-9]+$ ]] ||
-            die "backfill BLNT custody is invalid"
-        [[ "${remaining}" =~ ^[0-9]+$ ]] ||
-            die "remaining conversion capacity is invalid"
-        (( backfill_balance <= BACKFILL_PREMINT )) ||
-            die "backfill BLNT custody exceeds its initial funding"
-        (( remaining <= SWAP_CAPACITY )) ||
-            die "remaining conversion capacity exceeds its initial funding"
+        lp_recipient="$(state_value comet_lp_recipient)"
+        lp_balance="$(normalize_scalar "$(invoke_view \
+            "query-comet-lp-recipient-balance" "${comet}" balance \
+            --id "${lp_recipient}")")"
+        assert_equal "${COMET_INITIAL_LP_SUPPLY}" "${lp_balance}" \
+            "initial Comet LP recipient balance"
     fi
-    verify_fixed_pool_deployment
-    verify_wallet_funding_record
-    if [[ "${verify_initial_balances}" == "true" ]]; then
-        verify_wallet_funding
-    fi
+    verify_testnet_v21_pool_deployment
 }
 
 command_plan() {
-    local legacy_description metadata_description
-    validate_blnt_home_domain
+    local blnd_description
     if [[ "${NETWORK_MODE}" == "local" ]]; then
-        legacy_description="deploy an isolated seven-decimal BLND fixture"
+        blnd_description="deploy a local BLND and legacy-emitter fixture"
     else
-        legacy_description="bind external legacy BLND ${EXTERNAL_BLND} read-only"
-    fi
-    if [[ -n "${BLNT_HOME_DOMAIN}" ]]; then
-        metadata_description="Set the BLNT issuer home domain to ${BLNT_HOME_DOMAIN}"
-    else
-        metadata_description="Leave the optional BLNT issuer home domain empty"
+        blnd_description="reuse BLND ${EXTERNAL_BLND} and its existing emitter"
     fi
     cat <<EOF
 Blend v2.1 ${NETWORK_LABEL} deployment
 
-  1. Validate the committed 434-recipient / 74-million-BLNT manifest, fetch and
-     hash-check the official V2.0.0 release WASMs, build backfill and Comet v1.1
-     with their pinned toolchains, and verify the committed V1 emitter WASM.
-  2. Create BLNT from a dedicated issuer.
-     ${metadata_description}.
-     Create USDC and EURC fixtures from the operator and ${legacy_description}.
-  3. Deploy the BLNT backfill contract with the committed claim list and []
-     contributor grants, then premint exactly 125,000,000 BLNT to it while the
-     issuer still controls BLNT (74,000,000 claims + 0 grants + 51,000,000
-     conversion reserve).
-  4. Initialize one seven-decimal 80:20 BLNT:USDC Comet v1.1 LP with 600 BLNT
-     and 6 USDC, establishing 100 LP shares at the intended initial price.
-     Mint exactly 999,996 BLNT and 9,999.96 USDC to join proportionally for
-     166,666 more shares without changing that price, transfer all 166,766
-     shares to the operator, then permanently lock its empty controller account.
-  5. Predict the backstop address, bind the upstream V2 factory and unchanged V1
-     emitter to it, immediately invoke its legacy initialization entry point,
-     and transfer BLNT administration to it.
-  6. Deploy the unchanged backstop with an empty legacy drop list and initialize
-     its emissions checkpoint. Deploy an authenticated test-only SEP-40 oracle
-     and a Fixed Pool modeled on mainnet Fixed Pool V2, deposit all 166,766 LP
-     shares, activate it, add it to the reward zone, mirror the mainnet emission
-     split, and seed 1,000 USDC of supply.
-  7. On testnet, send 1,000,000 each of new BLNT, USDC, and EURC plus exactly
-     100,000 native XLM to ${FUNDING_WALLET}.
-  8. Irreversibly lock the BLNT issuer at mainnet BLND's 88/88/88 thresholds,
-     verify every token, LP, authority, allocation, pool, oracle, funding, and
-     custody binding, and save transaction evidence under ${WORK_DIR}.
+  1. Fetch and hash-check the official unchanged V2.0.0 release WASMs and
+     build Comet v1.1 with its pinned toolchain.
+  2. ${blnd_description}. On testnet, reuse TestnetV2's existing XLM, USDC,
+     wETH, and wBTC assets and its existing SEP-40 oracle.
+  3. Initialize one seven-decimal 80:20 BLND:USDC Comet v1.1 LP with 600 BLND
+     and 6 USDC, transfer all 100 initial LP shares to ${FUNDING_WALLET}, then
+     permanently lock its empty controller account.
+  4. Predict the backstop address and deploy the unchanged V2 factory and
+     backstop bound to the existing BLND asset, existing V1 emitter, and new LP.
+  5. Deploy the single TestnetV2.1 pool with the live TestnetV2 pool settings,
+     reserve order, reserve configurations, assets, and oracle. Leave it
+     admin-on-ice, outside the reward zone, and with an unfunded backstop.
+  6. Verify every token, LP, emitter, pool, oracle, and custody binding and save
+     transaction evidence under ${WORK_DIR}.
+
+The user funds the TestnetV2.1 backstop after deployment. Pool activation,
+reward-zone enrollment, legacy backfill accounting, and the normal V1-emitter
+upgrade are deliberately outside this deployment step.
 
 The plan, validation, and status commands submit no transactions.
 EOF
 }
 
 command_validate() {
-    validate_blnt_home_domain
     validate_build_tools
-    validate_manifest
     build_artifacts
     validate_artifacts
-    note "Validated v2.1, zero-grant backfill, and Comet v1.1 artifacts."
+    note "Validated unchanged V2, Comet v1.1, and test-oracle artifacts."
 }
 
 command_start() {
@@ -1600,13 +1314,11 @@ command_start() {
 
 command_deploy() {
     local skip_build="${1:-false}"
-    local operator blnt_issuer controller legacy_blnd legacy_blnd_issuer
-    local blnt usdc eurc xlm
-    local emitter backfill comet pool_hash backstop factory deployed_backstop
+    local operator controller blnd blnd_issuer blnd_source usdc usdc_issuer weth wbtc xlm oracle
+    local lp_recipient
+    local emitter initial_backstop comet pool_hash backstop factory deployed_backstop
 
-    validate_blnt_home_domain
     validate_build_tools
-    validate_manifest
     require_network
     [[ ! -e "${STATE_FILE}" ]] ||
         die "state already exists at ${STATE_FILE}; refusing to overwrite it"
@@ -1617,89 +1329,89 @@ command_deploy() {
 
     mkdir -p "${CONFIG_DIR}"
     operator="$(ensure_identity "${OPERATOR_IDENTITY}")"
-    blnt_issuer="$(ensure_identity "${BLNT_ISSUER_IDENTITY}")"
     controller="$(ensure_identity "${CONTROLLER_IDENTITY}")"
     fund_and_wait_for_account "${operator}"
-    fund_and_wait_for_account "${blnt_issuer}"
     fund_and_wait_for_account "${controller}"
-    [[ "${operator}" != "${blnt_issuer}" && \
-        "${operator}" != "${controller}" && \
-        "${blnt_issuer}" != "${controller}" ]] ||
-        die "operator, BLNT issuer, and Comet controller must be distinct accounts"
+    [[ "${operator}" != "${controller}" ]] ||
+        die "operator and Comet controller must be distinct accounts"
     new_run_dir
-    require_clean_blnt_issuer "${blnt_issuer}"
-    initialize_state "${operator}" "${blnt_issuer}" "${controller}"
-    if [[ -n "${BLNT_HOME_DOMAIN}" ]]; then
-        capture "set-blnt-issuer-home-domain" stellar_cli tx new set-options \
-            --source-account "${BLNT_ISSUER_IDENTITY}" \
-            --home-domain "${BLNT_HOME_DOMAIN}" \
-            --rpc-url "${RPC_URL}" \
-            --network-passphrase "${NETWORK_PASSPHRASE}" >/dev/null
-        verify_blnt_issuer_home_domain "${blnt_issuer}" "${BLNT_HOME_DOMAIN}"
-    fi
-    state_set "blnt_home_domain" "${BLNT_HOME_DOMAIN}"
-
+    initialize_state "${operator}" "${controller}"
     record_deployment_inputs
 
     if [[ "${NETWORK_MODE}" == "local" ]]; then
-        legacy_blnd="$(deploy_asset "deploy-legacy-blnd" BLND "${operator}")"
-        legacy_blnd_issuer="${operator}"
+        blnd="$(deploy_asset "deploy-blnd" BLND "${operator}")"
+        blnd_issuer="${operator}"
+        blnd_source="${operator}"
+        usdc_issuer="${operator}"
+        usdc="$(deploy_asset "deploy-usdc" USDC "${usdc_issuer}")"
+        weth="$(deploy_asset "deploy-weth" wETH "${operator}")"
+        wbtc="$(deploy_asset "deploy-wbtc" wBTC "${operator}")"
+        lp_recipient="${operator}"
     else
-        legacy_blnd="${EXTERNAL_BLND}"
-        legacy_blnd_issuer="${EXTERNAL_BLND_ISSUER}"
-        require_external_blnd "${legacy_blnd}"
+        blnd="${EXTERNAL_BLND}"
+        blnd_issuer="${EXTERNAL_BLND_ISSUER}"
+        require_existing_blnd "${blnd}" "${blnd_issuer}"
+        blnd_source="$(blnd_source_stellar_cli keys public-key "${BLND_SOURCE_IDENTITY}")" ||
+            die "BLND source identity is unavailable: ${BLND_SOURCE_IDENTITY}"
+        require_blnd_source_access "${blnd_source}"
+        require_funding_wallet_access
+        usdc="${EXTERNAL_TESTNET_USDC}"
+        usdc_issuer="${EXTERNAL_TESTNET_USDC_ISSUER}"
+        weth="${EXTERNAL_TESTNET_WETH}"
+        wbtc="${EXTERNAL_TESTNET_WBTC}"
+        oracle="${EXTERNAL_TESTNET_ORACLE}"
+        lp_recipient="${FUNDING_WALLET}"
     fi
-    state_set "legacy_blnd_token" "${legacy_blnd}"
-    state_set "legacy_blnd_issuer" "${legacy_blnd_issuer}"
-    blnt="$(deploy_asset "deploy-blnt" BLNT "${blnt_issuer}")"
-    state_set "blnt_token" "${blnt}"
-    usdc="$(deploy_asset "deploy-usdc" USDC "${operator}")"
+    state_set "blnd_token" "${blnd}"
+    state_set "blnd_issuer" "${blnd_issuer}"
+    state_set "blnd_liquidity_source" "${blnd_source}"
     state_set "usdc_token" "${usdc}"
-    eurc="$(deploy_asset "deploy-eurc" EURC "${operator}")"
-    state_set "eurc_token" "${eurc}"
+    state_set "usdc_issuer" "${usdc_issuer}"
+    state_set "weth_token" "${weth}"
+    state_set "wbtc_token" "${wbtc}"
     xlm="$(resolve_native_asset "resolve-native-xlm")"
     state_set "xlm_token" "${xlm}"
+    state_set "funding_wallet" "${FUNDING_WALLET}"
+    state_set "comet_lp_recipient" "${lp_recipient}"
+    if [[ "${NETWORK_MODE}" == "testnet" ]]; then
+        state_set "pool_oracle" "${oracle}"
+        assert_equal "USDC" "$(normalize_scalar "$(invoke_view \
+            "verify-testnet-v2-usdc-symbol" "${usdc}" symbol)")" \
+            "TestnetV2 USDC symbol"
+        assert_equal "wETH" "$(normalize_scalar "$(invoke_view \
+            "verify-testnet-v2-weth-symbol" "${weth}" symbol)")" \
+            "TestnetV2 wETH symbol"
+        assert_equal "wBTC" "$(normalize_scalar "$(invoke_view \
+            "verify-testnet-v2-wbtc-symbol" "${wbtc}" symbol)")" \
+            "TestnetV2 wBTC symbol"
+        validate_live_testnet_v2_source
+    fi
 
-    fund_testnet_wallet_assets "${blnt}" "${blnt_issuer}" "${usdc}" "${eurc}"
-
-    create_trustline "trust-controller-blnt" \
-        "${CONTROLLER_IDENTITY}" "BLNT:${blnt_issuer}"
+    create_trustline "trust-controller-blnd" \
+        "${CONTROLLER_IDENTITY}" "BLND:${blnd_issuer}"
     create_trustline "trust-controller-usdc" \
-        "${CONTROLLER_IDENTITY}" "USDC:${operator}"
+        "${CONTROLLER_IDENTITY}" "USDC:${usdc_issuer}"
 
-    backfill="$(deploy_wasm "deploy-backfill" "${BACKFILL_WASM}" "" \
-        --legacy_blnd_token "${legacy_blnd}" \
-        --blnt_token "${blnt}" \
-        --claim_list "${CLAIM_LIST}" \
-        --grant_list '[]')"
     comet="$(deploy_wasm "deploy-comet-v11" "${COMET_WASM}" "")"
-    state_set "backfill" "${backfill}"
-    state_set "comet_blnt_usdc" "${comet}"
+    state_set "comet_blnd_usdc" "${comet}"
 
-    invoke_transaction_as "premint-backfill-blnt" "${BLNT_ISSUER_IDENTITY}" \
-        "${blnt}" mint \
-        --to "${backfill}" --amount "${BACKFILL_PREMINT}" >/dev/null
-    state_set "backfill_premint_completed" "true"
-    invoke_transaction_as "mint-comet-blnt" "${BLNT_ISSUER_IDENTITY}" \
-        "${blnt}" mint \
-        --to "${controller}" --amount "${COMET_BLNT_BALANCE}" >/dev/null
-    invoke_transaction "mint-comet-usdc" "${usdc}" mint \
-        --to "${controller}" --amount "${COMET_USDC_BALANCE}" >/dev/null
+    fund_controller_blnd "${blnd}" "${controller}" \
+        "${COMET_BLND_BALANCE}" "${blnd_source}"
+    fund_controller_usdc "${usdc}" "${controller}" "${COMET_USDC_BALANCE}"
     invoke_transaction_as "initialize-comet-v11" "${CONTROLLER_IDENTITY}" \
         "${comet}" init \
         --controller "${controller}" \
-        --tokens "[\"${blnt}\",\"${usdc}\"]" \
-        --weights "[\"${COMET_BLNT_WEIGHT}\",\"${COMET_USDC_WEIGHT}\"]" \
-        --balances "[\"${COMET_BLNT_BALANCE}\",\"${COMET_USDC_BALANCE}\"]" \
+        --tokens "[\"${blnd}\",\"${usdc}\"]" \
+        --weights "[\"${COMET_BLND_WEIGHT}\",\"${COMET_USDC_WEIGHT}\"]" \
+        --balances "[\"${COMET_BLND_BALANCE}\",\"${COMET_USDC_BALANCE}\"]" \
         --swap_fee "${COMET_SWAP_FEE}" >/dev/null
     state_set "comet_initialized" "true"
     invoke_transaction_as "transfer-initial-comet-lp" "${CONTROLLER_IDENTITY}" \
         "${comet}" transfer \
-        --from "${controller}" --to "${operator}" \
+        --from "${controller}" --to "${lp_recipient}" \
         --amount "${COMET_INITIAL_LP_SUPPLY}" >/dev/null
     state_set "comet_lp_transferred" "true"
-    provision_comet_liquidity \
-        "${comet}" "${blnt}" "${usdc}" "${controller}" "${operator}"
+    verify_comet_controller_empty "${blnd}" "${usdc}" "${controller}"
     capture "lock-comet-controller" stellar_cli tx new set-options \
         --source-account "${CONTROLLER_IDENTITY}" \
         --low-threshold "${COMET_CONTROLLER_THRESHOLD}" \
@@ -1715,47 +1427,41 @@ command_deploy() {
     require_contract_id "${backstop}" "predicted backstop"
     factory="$(deploy_wasm "deploy-v2-pool-factory" "${V2_FACTORY_WASM}" "" \
         --pool_init_meta \
-        "{\"backstop\":\"${backstop}\",\"blnd_id\":\"${blnt}\",\"pool_hash\":\"${pool_hash}\"}")"
+        "{\"backstop\":\"${backstop}\",\"blnd_id\":\"${blnd}\",\"pool_hash\":\"${pool_hash}\"}")"
     state_set "pool_wasm_hash" "${pool_hash}"
     state_set "pool_factory" "${factory}"
     state_set "backstop" "${backstop}"
 
-    emitter="$(deploy_wasm "deploy-v1-emitter" "${V1_EMITTER_WASM}" "")"
+    if [[ "${NETWORK_MODE}" == "local" ]]; then
+        emitter="$(deploy_wasm "deploy-local-v1-emitter" "${V1_EMITTER_WASM}" "")"
+        initial_backstop="${operator}"
+        invoke_transaction "initialize-local-emitter" "${emitter}" initialize \
+            --blnd_token "${blnd}" \
+            --backstop "${initial_backstop}" \
+            --backstop_token "${comet}" >/dev/null
+        invoke_transaction "set-local-emitter-as-blnd-admin" \
+            "${blnd}" set_admin --new_admin "${emitter}" >/dev/null
+    else
+        emitter="$(resolve_testnet_emitter "${blnd}")"
+        initial_backstop="${EXTERNAL_BLEND_BACKSTOP}"
+    fi
     state_set "emitter" "${emitter}"
-    invoke_transaction "initialize-emitter" "${emitter}" initialize \
-        --blnd_token "${blnt}" \
-        --backstop "${backstop}" \
-        --backstop_token "${comet}" >/dev/null
-    state_set "emitter_initialized" "true"
-    invoke_transaction_as "set-emitter-as-blnt-admin" "${BLNT_ISSUER_IDENTITY}" \
-        "${blnt}" set_admin \
-        --new_admin "${emitter}" >/dev/null
+    state_set "emitter_initial_backstop" "${initial_backstop}"
     assert_equal "${emitter}" "$(normalize_scalar "$(invoke_view \
-        "verify-blnt-admin-before-issuer-lock" "${blnt}" admin)")" \
-        "BLNT administrator before issuer lock"
+        "verify-blnd-admin" "${blnd}" admin)")" "BLND administrator"
     deployed_backstop="$(deploy_wasm "deploy-v2-backstop" \
         "${V2_BACKSTOP_WASM}" "${BACKSTOP_SALT}" \
         --backstop_token "${comet}" \
         --emitter "${emitter}" \
-        --blnd_token "${blnt}" \
+        --blnd_token "${blnd}" \
         --usdc_token "${usdc}" \
         --pool_factory "${factory}" \
         --drop_list '[]')"
     assert_equal "${backstop}" "${deployed_backstop}" "predicted backstop address"
     state_set "backstop_deployed" "true"
 
-    invoke_transaction "initialize-backstop-emissions" \
-        "${backstop}" distribute >/dev/null
-    state_set "backstop_emissions_initialized" "true"
-    deploy_fixed_pool "${factory}" "${backstop}" "${operator}"
-    capture "lock-blnt-issuer" stellar_cli tx new set-options \
-        --source-account "${BLNT_ISSUER_IDENTITY}" \
-        --low-threshold "${BLNT_ISSUER_THRESHOLD}" \
-        --med-threshold "${BLNT_ISSUER_THRESHOLD}" \
-        --high-threshold "${BLNT_ISSUER_THRESHOLD}" \
-        --master-weight 0 \
-        --rpc-url "${RPC_URL}" \
-        --network-passphrase "${NETWORK_PASSPHRASE}" >/dev/null
+    deploy_testnet_v21_pool "${factory}" "${backstop}" "${operator}"
+    state_set "pool_deployed" "true"
     verify_deployment
     state_set "phase" "verified"
     state_set "verified_at" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -1763,303 +1469,21 @@ command_deploy() {
         --rpc-url "${RPC_URL}" \
         --network-passphrase "${NETWORK_PASSPHRASE}" \
         --output json-formatted >"${RUN_DIR}/ledger-after-deploy.json"
-    note "Blend v2.1 deployment verified. State: ${STATE_FILE}"
+    note "Blend v2.1 TestnetV2.1 deployment verified. State: ${STATE_FILE}"
 }
 
 command_resume() {
-    local operator blnt_issuer controller legacy_blnd legacy_blnd_issuer
-    local blnt usdc eurc xlm recorded
-    local backfill comet balance initialized pool_hash backstop factory emitter
-    local deployed_backstop admin account saved_home current_home recipient probe
-
-    validate_blnt_home_domain
-    validate_build_tools
-    validate_manifest
+    local operator factory backstop
+    validate_runtime_tools
     require_network
-    validate_artifacts
     load_state
-    assert_equal "deploying" "$(state_value phase)" "resumable deployment phase"
-    record_deployment_inputs
+    assert_equal "deploying" "$(state_value phase)" "deployment phase"
+    validate_artifacts
     operator="$(state_value operator)"
-    blnt_issuer="$(state_value blnt_issuer)"
-    controller="$(state_value comet_controller)"
-    assert_equal "${operator}" "$(stellar_cli keys public-key "${OPERATOR_IDENTITY}")" \
-        "saved operator identity"
-    assert_equal "${blnt_issuer}" "$(stellar_cli keys public-key "${BLNT_ISSUER_IDENTITY}")" \
-        "saved BLNT issuer identity"
-    assert_equal "${controller}" "$(stellar_cli keys public-key "${CONTROLLER_IDENTITY}")" \
-        "saved Comet controller identity"
-
-    if ! state_has blnt_home_domain; then
-        saved_home="${BLNT_HOME_DOMAIN}"
-        state_set "blnt_home_domain" "${saved_home}"
-    else
-        saved_home="$(state_value blnt_home_domain)"
-    fi
-    if [[ -n "${BLNT_HOME_DOMAIN}" ]]; then
-        assert_equal "${saved_home}" "${BLNT_HOME_DOMAIN}" \
-            "saved BLNT issuer home domain"
-    fi
-    account="$(capture "resume-query-blnt-issuer-home-domain" \
-        curl --fail --silent --show-error --max-time 10 \
-        "${HORIZON_URL}/accounts/${blnt_issuer}")"
-    current_home="$(printf '%s' "${account}" | jq -er '.home_domain // ""')"
-    if [[ -z "${current_home}" && -n "${saved_home}" ]]; then
-        capture "resume-set-blnt-issuer-home-domain" stellar_cli tx new set-options \
-            --source-account "${BLNT_ISSUER_IDENTITY}" \
-            --home-domain "${saved_home}" \
-            --rpc-url "${RPC_URL}" \
-            --network-passphrase "${NETWORK_PASSPHRASE}" >/dev/null
-    else
-        assert_equal "${saved_home}" "${current_home}" \
-            "current BLNT issuer home domain"
-    fi
-
-    if [[ "${NETWORK_MODE}" == "testnet" ]]; then
-        recorded="$(state_optional legacy_blnd_token)"
-        [[ -z "${recorded}" ]] ||
-            assert_equal "${EXTERNAL_BLND}" "${recorded}" "saved legacy BLND token"
-        legacy_blnd="${EXTERNAL_BLND}"
-        legacy_blnd_issuer="${EXTERNAL_BLND_ISSUER}"
-        require_external_blnd "${legacy_blnd}"
-    else
-        legacy_blnd="$(ensure_asset "legacy-blnd" BLND "${operator}")"
-        legacy_blnd_issuer="${operator}"
-    fi
-    state_set "legacy_blnd_token" "${legacy_blnd}"
-    state_set "legacy_blnd_issuer" "${legacy_blnd_issuer}"
-
-    blnt="$(ensure_asset "blnt" BLNT "${blnt_issuer}")"
-    recorded="$(state_optional blnt_token)"
-    [[ -z "${recorded}" ]] ||
-        assert_equal "${recorded}" "${blnt}" "saved BLNT token"
-    state_set "blnt_token" "${blnt}"
-    usdc="$(ensure_asset "usdc" USDC "${operator}")"
-    recorded="$(state_optional usdc_token)"
-    [[ -z "${recorded}" ]] ||
-        assert_equal "${recorded}" "${usdc}" "saved USDC token"
-    state_set "usdc_token" "${usdc}"
-    eurc="$(ensure_asset "eurc" EURC "${operator}")"
-    recorded="$(state_optional eurc_token)"
-    [[ -z "${recorded}" ]] ||
-        assert_equal "${recorded}" "${eurc}" "saved EURC token"
-    state_set "eurc_token" "${eurc}"
-    xlm="$(resolve_native_asset "resume-resolve-native-xlm")"
-    recorded="$(state_optional xlm_token)"
-    [[ -z "${recorded}" ]] ||
-        assert_equal "${recorded}" "${xlm}" "saved native XLM token"
-    state_set "xlm_token" "${xlm}"
-
-    fund_testnet_wallet_assets "${blnt}" "${blnt_issuer}" "${usdc}" "${eurc}"
-    verify_wallet_funding
-
-    if [[ "$(state_optional comet_controller_locked)" != "true" ]]; then
-        account="$(capture "resume-query-comet-controller-lock" \
-            curl --fail --silent --show-error --max-time 10 \
-            "${HORIZON_URL}/accounts/${controller}")"
-        if printf '%s' "${account}" | jq -e \
-            --arg controller "${controller}" \
-            --argjson threshold "${COMET_CONTROLLER_THRESHOLD}" '
-              .thresholds.low_threshold == $threshold and
-              .thresholds.med_threshold == $threshold and
-              .thresholds.high_threshold == $threshold and
-              (.signers | length) == 1 and
-              .signers[0].key == $controller and
-              .signers[0].weight == 0
-            ' >/dev/null
-        then
-            state_set "comet_controller_locked" "true"
-        fi
-    fi
-    if [[ "$(state_optional comet_controller_locked)" != "true" ]]; then
-        create_trustline "resume-trust-controller-blnt" \
-            "${CONTROLLER_IDENTITY}" "BLNT:${blnt_issuer}"
-        create_trustline "resume-trust-controller-usdc" \
-            "${CONTROLLER_IDENTITY}" "USDC:${operator}"
-    fi
-
-    backfill="$(state_optional backfill)"
-    if [[ -z "${backfill}" ]]; then
-        backfill="$(deploy_wasm "deploy-backfill" "${BACKFILL_WASM}" "" \
-            --legacy_blnd_token "${legacy_blnd}" \
-            --blnt_token "${blnt}" \
-            --claim_list "${CLAIM_LIST}" \
-            --grant_list '[]')"
-        state_set "backfill" "${backfill}"
-    fi
-    comet="$(state_optional comet_blnt_usdc)"
-    if [[ -z "${comet}" ]]; then
-        comet="$(deploy_wasm "deploy-comet-v11" "${COMET_WASM}" "")"
-        state_set "comet_blnt_usdc" "${comet}"
-    fi
-
-    balance="$(normalize_scalar "$(invoke_view \
-        "resume-query-backfill-blnt" "${blnt}" balance --id "${backfill}")")"
-    if [[ "$(state_optional backfill_premint_completed)" != "true" ]]; then
-        if (( balance == 0 )); then
-            invoke_transaction_as "premint-backfill-blnt" "${BLNT_ISSUER_IDENTITY}" \
-                "${blnt}" mint --to "${backfill}" \
-                --amount "${BACKFILL_PREMINT}" >/dev/null
-        else
-            assert_equal "${BACKFILL_PREMINT}" "${balance}" \
-                "unrecorded backfill BLNT premint"
-        fi
-        state_set "backfill_premint_completed" "true"
-    fi
-
-    initialized="$(state_optional comet_initialized)"
-    if [[ "${initialized}" != "true" ]]; then
-        if admin="$(invoke_view "resume-probe-comet-initialized" \
-            "${comet}" get_controller)"
-        then
-            assert_equal "${controller}" "$(normalize_scalar "${admin}")" \
-                "initialized Comet controller"
-            state_set "comet_initialized" "true"
-            initialized="true"
-        fi
-    fi
-    if [[ "${initialized}" != "true" ]]; then
-        balance="$(normalize_scalar "$(invoke_view \
-            "resume-query-controller-blnt" "${blnt}" balance --id "${controller}")")"
-        (( balance <= COMET_BLNT_BALANCE )) || die "controller BLNT exceeds Comet seed"
-        if (( balance < COMET_BLNT_BALANCE )); then
-            invoke_transaction_as "mint-comet-blnt" "${BLNT_ISSUER_IDENTITY}" \
-                "${blnt}" mint --to "${controller}" \
-                --amount "$((COMET_BLNT_BALANCE - balance))" >/dev/null
-        fi
-        balance="$(normalize_scalar "$(invoke_view \
-            "resume-query-controller-usdc" "${usdc}" balance --id "${controller}")")"
-        (( balance <= COMET_USDC_BALANCE )) || die "controller USDC exceeds Comet seed"
-        if (( balance < COMET_USDC_BALANCE )); then
-            invoke_transaction "mint-comet-usdc" "${usdc}" mint \
-                --to "${controller}" --amount "$((COMET_USDC_BALANCE - balance))" >/dev/null
-        fi
-        invoke_transaction_as "initialize-comet-v11" "${CONTROLLER_IDENTITY}" \
-            "${comet}" init \
-            --controller "${controller}" \
-            --tokens "[\"${blnt}\",\"${usdc}\"]" \
-            --weights "[\"${COMET_BLNT_WEIGHT}\",\"${COMET_USDC_WEIGHT}\"]" \
-            --balances "[\"${COMET_BLNT_BALANCE}\",\"${COMET_USDC_BALANCE}\"]" \
-            --swap_fee "${COMET_SWAP_FEE}" >/dev/null
-        state_set "comet_initialized" "true"
-    fi
-    if [[ "$(state_optional comet_lp_transferred)" != "true" ]]; then
-        balance="$(normalize_scalar "$(invoke_view \
-            "resume-query-operator-comet-lp" "${comet}" balance --id "${operator}")")"
-        if (( balance == 0 )); then
-            invoke_transaction_as "transfer-initial-comet-lp" "${CONTROLLER_IDENTITY}" \
-                "${comet}" transfer --from "${controller}" --to "${operator}" \
-                --amount "${COMET_INITIAL_LP_SUPPLY}" >/dev/null
-        else
-            assert_equal "${COMET_INITIAL_LP_SUPPLY}" "${balance}" \
-                "existing operator Comet LP balance"
-        fi
-        state_set "comet_lp_transferred" "true"
-    fi
-    provision_comet_liquidity \
-        "${comet}" "${blnt}" "${usdc}" "${controller}" "${operator}"
-    if [[ "$(state_optional comet_controller_locked)" != "true" ]]; then
-        capture "lock-comet-controller" stellar_cli tx new set-options \
-            --source-account "${CONTROLLER_IDENTITY}" \
-            --low-threshold "${COMET_CONTROLLER_THRESHOLD}" \
-            --med-threshold "${COMET_CONTROLLER_THRESHOLD}" \
-            --high-threshold "${COMET_CONTROLLER_THRESHOLD}" \
-            --master-weight 0 \
-            --rpc-url "${RPC_URL}" \
-            --network-passphrase "${NETWORK_PASSPHRASE}" >/dev/null
-        state_set "comet_controller_locked" "true"
-    fi
-
-    factory="$(state_optional pool_factory)"
-    if [[ -z "${factory}" ]]; then
-        pool_hash="$(upload_wasm "upload-v2-pool" "${V2_POOL_WASM}")"
-        backstop="$(predict_contract_id "predict-v21-backstop" "${BACKSTOP_SALT}")"
-        require_contract_id "${backstop}" "predicted backstop"
-        factory="$(deploy_wasm "deploy-v2-pool-factory" "${V2_FACTORY_WASM}" "" \
-            --pool_init_meta \
-            "{\"backstop\":\"${backstop}\",\"blnd_id\":\"${blnt}\",\"pool_hash\":\"${pool_hash}\"}")"
-        state_set "pool_wasm_hash" "${pool_hash}"
-        state_set "pool_factory" "${factory}"
-        state_set "backstop" "${backstop}"
-    else
-        pool_hash="$(state_value pool_wasm_hash)"
-        backstop="$(state_value backstop)"
-    fi
-
-    emitter="$(state_optional emitter)"
-    if [[ -z "${emitter}" ]]; then
-        emitter="$(deploy_wasm "deploy-v1-emitter" "${V1_EMITTER_WASM}" "")"
-        state_set "emitter" "${emitter}"
-    fi
-    if [[ "$(state_optional emitter_initialized)" != "true" ]]; then
-        if recipient="$(invoke_view "resume-probe-emitter-initialized" \
-            "${emitter}" get_backstop)"
-        then
-            assert_equal "${backstop}" "$(normalize_scalar "${recipient}")" \
-                "initialized emitter backstop"
-        else
-            invoke_transaction "initialize-emitter" "${emitter}" initialize \
-                --blnd_token "${blnt}" --backstop "${backstop}" \
-                --backstop_token "${comet}" >/dev/null
-        fi
-        state_set "emitter_initialized" "true"
-    fi
-    admin="$(normalize_scalar "$(invoke_view \
-        "resume-query-blnt-admin" "${blnt}" admin)")"
-    if [[ "${admin}" == "${blnt_issuer}" ]]; then
-        invoke_transaction_as "set-emitter-as-blnt-admin" "${BLNT_ISSUER_IDENTITY}" \
-            "${blnt}" set_admin --new_admin "${emitter}" >/dev/null
-    else
-        assert_equal "${emitter}" "${admin}" "existing BLNT administrator"
-    fi
-
-    if [[ "$(state_optional backstop_deployed)" != "true" ]]; then
-        if invoke_view "probe-existing-v2-backstop" \
-            "${backstop}" backstop_token >/dev/null
-        then
-            deployed_backstop="${backstop}"
-        else
-            deployed_backstop="$(deploy_wasm "deploy-v2-backstop" \
-                "${V2_BACKSTOP_WASM}" "${BACKSTOP_SALT}" \
-                --backstop_token "${comet}" --emitter "${emitter}" \
-                --blnd_token "${blnt}" --usdc_token "${usdc}" \
-                --pool_factory "${factory}" --drop_list '[]')"
-        fi
-        assert_equal "${backstop}" "${deployed_backstop}" "predicted backstop address"
-        state_set "backstop_deployed" "true"
-    fi
-    if [[ "$(state_optional backstop_emissions_initialized)" != "true" ]]; then
-        if probe="$(invoke_probe "resume-probe-backstop-emissions" \
-            "${backstop}" distribute)"
-        then
-            invoke_transaction "initialize-backstop-emissions" \
-                "${backstop}" distribute >/dev/null
-        elif [[ ! "${probe}" =~ \#1000([^0-9]|$) ]]; then
-            die "unable to establish backstop emissions checkpoint: ${probe}"
-        fi
-        state_set "backstop_emissions_initialized" "true"
-    fi
-    deploy_fixed_pool "${factory}" "${backstop}" "${operator}"
-
-    account="$(curl --fail --silent --show-error --max-time 10 \
-        "${HORIZON_URL}/accounts/${blnt_issuer}")"
-    if ! printf '%s' "${account}" | jq -e \
-        --argjson threshold "${BLNT_ISSUER_THRESHOLD}" '
-          .thresholds.low_threshold == $threshold and
-          .thresholds.med_threshold == $threshold and
-          .thresholds.high_threshold == $threshold and
-          .signers[0].weight == 0
-        ' >/dev/null
-    then
-        capture "lock-blnt-issuer" stellar_cli tx new set-options \
-            --source-account "${BLNT_ISSUER_IDENTITY}" \
-            --low-threshold "${BLNT_ISSUER_THRESHOLD}" \
-            --med-threshold "${BLNT_ISSUER_THRESHOLD}" \
-            --high-threshold "${BLNT_ISSUER_THRESHOLD}" \
-            --master-weight 0 \
-            --rpc-url "${RPC_URL}" \
-            --network-passphrase "${NETWORK_PASSPHRASE}" >/dev/null
-    fi
+    factory="$(state_value pool_factory)"
+    backstop="$(state_value backstop)"
+    deploy_testnet_v21_pool "${factory}" "${backstop}" "${operator}"
+    state_set "pool_deployed" "true"
     verify_deployment
     state_set "phase" "verified"
     state_set "verified_at" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -2067,7 +1491,98 @@ command_resume() {
         --rpc-url "${RPC_URL}" \
         --network-passphrase "${NETWORK_PASSPHRASE}" \
         --output json-formatted >"${RUN_DIR}/ledger-after-deploy.json"
-    note "Blend v2.1 resumed deployment verified. State: ${STATE_FILE}"
+    note "Blend v2.1 TestnetV2.1 deployment resumed and verified. State: ${STATE_FILE}"
+}
+
+command_activate_pool() {
+    local pool backstop emitter initial_recipient recipient status reward pool_data shares tokens
+    validate_runtime_tools
+    require_network
+    load_state
+    assert_equal "verified" "$(state_value phase)" "deployment phase"
+    assert_equal "${TESTNET_V2_FIXTURE_SHA256}" \
+        "$(sha256_file "${TESTNET_V2_FIXTURE}")" \
+        "designated TestnetV2 fixture hash"
+    validate_testnet_v2_fixture
+    pool="$(state_value pool)"
+    backstop="$(state_value backstop)"
+    emitter="$(state_value emitter)"
+    initial_recipient="$(state_value emitter_initial_backstop)"
+
+    if [[ "$(state_optional pool_activation_pending)" == "false" ]]; then
+        verify_deployment false
+        note "TestnetV2.1 is already active for borrowing and in the reward zone."
+        return
+    fi
+
+    recipient="$(normalize_scalar "$(invoke_view \
+        "activate-query-emitter-backstop" "${emitter}" get_backstop)")"
+    assert_equal "${initial_recipient}" "${recipient}" \
+        "emitter backstop before legacy backfill activation"
+
+    pool_data="$(invoke_view "activate-query-pool-backstop-data" \
+        "${backstop}" pool_data --pool "${pool}")"
+    shares="$(printf '%s' "${pool_data}" | jq -er '.shares | tostring')"
+    tokens="$(printf '%s' "${pool_data}" | jq -er '.tokens | tostring')"
+    [[ "${shares}" =~ ^[1-9][0-9]*$ ]] ||
+        die "TestnetV2.1 backstop has no deposited shares"
+    [[ "${tokens}" =~ ^[1-9][0-9]*$ ]] ||
+        die "TestnetV2.1 backstop has no deposited LP tokens"
+
+    status="$(invoke_view "activate-query-pool-status" "${pool}" get_config |
+        jq -er '.status | tostring')"
+    if [[ "${status}" != "0" ]]; then
+        assert_equal "2" "${status}" "TestnetV2.1 pre-activation status"
+        invoke_transaction "activate-testnet-v21-borrowing" \
+            "${pool}" set_status --pool_status 0 >/dev/null
+    fi
+
+    invoke_transaction "configure-testnet-v21-emissions" \
+        "${pool}" set_emissions_config \
+        --res_emission_metadata "$(jq -c '.pool.emissions' "${TESTNET_V2_FIXTURE}")" \
+        >/dev/null
+
+    reward="$(invoke_view "activate-query-reward-zone" "${backstop}" reward_zone)"
+    if printf '%s' "${reward}" | jq -e 'length == 0' >/dev/null; then
+        invoke_transaction "activate-testnet-v21-reward-zone" \
+            "${backstop}" add_reward --to_add "${pool}" --to_remove null >/dev/null
+    else
+        printf '%s' "${reward}" | jq -e --arg pool "${pool}" \
+            'length == 1 and .[0] == $pool' >/dev/null ||
+            die "unexpected V2.1 reward-zone contents"
+    fi
+
+    ensure_backstop_emissions_checkpoint "${backstop}"
+    state_mark_pool_activated
+    verify_deployment false
+    note "TestnetV2.1 borrowing and reward-zone activation verified."
+}
+
+command_enable_emissions() {
+    local emitter backstop recipient
+    validate_runtime_tools
+    require_network
+    load_state
+    assert_equal "verified" "$(state_value phase)" "deployment phase"
+    if [[ "$(state_optional emissions_enabled)" == "true" ]]; then
+        verify_deployment false
+        note "V2.1 emissions are already enabled."
+        return
+    fi
+    assert_equal "true" "$(state_value backfill_enabled)" \
+        "V2.1 legacy backfill activation"
+    emitter="$(state_value emitter)"
+    backstop="$(state_value backstop)"
+    recipient="$(normalize_scalar "$(invoke_view \
+        "enable-query-emitter-backstop" "${emitter}" get_backstop)")"
+    assert_equal "${backstop}" "${recipient}" \
+        "emitter backstop after the normal upgrade"
+    ensure_backfill_drop "${backstop}"
+    ensure_backstop_emissions_checkpoint "${backstop}"
+    state_set "emissions_transition_completed" "true"
+    state_mark_emissions_enabled
+    verify_deployment false
+    note "V2.1 backfill was dropped and normal BLND emissions are enabled."
 }
 
 command_status() {
@@ -2075,16 +1590,15 @@ command_status() {
     require_network
     load_state
     verify_deployment false
-    jq '{network_label, phase, verified_at, operator, blnt_issuer,
-         blnt_issuer_threshold, blnt_home_domain, comet_controller,
-         legacy_blnd_token, legacy_blnd_issuer, blnt_token, usdc_token,
-         eurc_token, xlm_token, emitter, backfill, comet_blnt_usdc,
-         pool_factory, backstop, fixed_pool_oracle, fixed_pool,
-         funding_wallet, wallet_blnt_funded,
-         wallet_usdc_funded, wallet_eurc_funded, wallet_xlm_funded,
-         backfill_premint,
-         backfill_claim_allocation, contributor_grant_allocation,
-         conversion_capacity}' "${STATE_FILE}"
+    jq '{network_label, phase, verified_at, operator, comet_controller,
+         blnd_token, blnd_issuer, blnd_liquidity_source, usdc_token,
+         weth_token, wbtc_token, xlm_token, emitter, emitter_initial_backstop,
+         comet_blnd_usdc, comet_lp_recipient, pool_factory, backstop,
+         pool_oracle, pool, funding_wallet,
+         backstop_deployed, pool_deployed, pool_backstop_funded,
+         pool_activation_pending, backfill_enabled,
+         backfill_active, backfill_drop_completed, emissions_transition_completed, emissions_enabled,
+         emissions_enabled_at}' "${STATE_FILE}"
 }
 
 command_stop() {
@@ -2109,6 +1623,8 @@ main() {
         start) command_start ;;
         deploy) command_deploy ;;
         resume) command_resume ;;
+        activate-pool) command_activate_pool ;;
+        enable-emissions) command_enable_emissions ;;
         run) command_run ;;
         status) command_status ;;
         stop) command_stop ;;

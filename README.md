@@ -1,23 +1,15 @@
 # Blend v2.1 migration
 
-This repository collects the repositories used for the Blend v2.1 migration as Git submodules.
+This repository collects the repositories and reproducible orchestration used to deploy Blend V2.1 on localnet and Stellar public testnet.
 
-It also contains the reproducible localnet and public-testnet deployment runner
-for the v2.1 launch topology: a new instance of the unchanged V1 emitter
-configured for BLNT, the zero-grant 125 million BLNT backfill allocation, an
-80:20 BLNT:USDC Comet v1.1 LP, a dedicated BLNT issuer locked to match mainnet
-BLND after SAC administration moves to the emitter, and the unchanged upstream
-V2 protocol contracts.
+V2.1 is a fresh deployment of the unchanged upstream Blend V2.0.0 contracts. It continues to use the existing BLND asset and V1 emitter, replaces the impaired backstop asset with a new seven-decimal 80:20 BLND:USDC Comet v1.1 LP, and introduces no BLNT asset or backfill contract.
 
-The testnet lane also deploys a controlled mock SEP-40 oracle and a Fixed Pool
-modeled on Fixed Pool V2, funds its backstop with all 166,766 Comet LP shares,
-and includes an hourly emissions keeper. The configured test wallet receives
-1,000,000 each of the newly issued BLNT, USDC, and EURC assets plus 100,000
-native XLM.
+The migration deploys the unchanged V2 backstop and one pool named `TestnetV2.1`, modeled directly on the `TestnetV2` pool shown by [testnet.blend.capital](https://testnet.blend.capital). On public testnet it reuses TestnetV2's XLM, USDC, wETH, and wBTC assets, live SEP-40 oracle, pool configuration, reserve order, and reserve risk parameters.
+
+The initial deployment deliberately leaves TestnetV2.1 admin-on-ice, outside the reward zone, and with an unfunded backstop. It initializes the new Comet with 600 BLND and 6 existing TestnetV2 USDC, sends the resulting 100 LP shares to the configured wallet, and permanently locks the empty Comet controller. After funding clears the unchanged V2 threshold, `make testnet-activate-pool` activates borrowing, enrolls the pool in the reward zone, installs TestnetV2's emission split, and starts legacy-emissions accounting. The normal V1-emitter upgrade remains separate.
 
 ## Included repositories
 
-- [`Blend-V2-1/blnt-backfill-contract`](https://github.com/Blend-V2-1/blnt-backfill-contract)
 - [`CometDEX/comet-contracts-v1`](https://github.com/CometDEX/comet-contracts-v1) (upstream `main`, Comet v1.1)
 - [`Blend-V2-1/blend-ui`](https://github.com/Blend-V2-1/blend-ui)
 - [`blend-capital/blend-sdk-js`](https://github.com/blend-capital/blend-sdk-js) (upstream `main`)
@@ -36,18 +28,11 @@ For an existing checkout:
 git submodule update --init --recursive
 ```
 
-Submodule commits are intentionally pinned for reproducibility. Do not use
-`git submodule update --remote` in a deployment checkout. Advancing a gitlink
-is a maintainer operation that requires reviewing the new source and any
-affected designated WASM hashes.
+Submodule commits are intentionally pinned for reproducibility. Do not use `git submodule update --remote` in a deployment checkout. Advancing a gitlink requires reviewing the new source and any affected designated WASM hashes.
 
 ## Build and deployment
 
-Backfill and Comet retain their pinned build toolchains. The three unchanged V2
-contracts are fetched from their official V2.0.0 GitHub releases and accepted
-only after fixed SHA-256 verification. The V1 emitter is deployed from the
-immutable WASM committed in `blend-contracts`. Locally built backfill, Comet,
-and test-oracle WASMs must also match their designated hashes before deployment:
+The unchanged V2 backstop, pool-factory, and pool contracts are fetched from the official V2.0.0 releases and accepted only after fixed SHA-256 verification. The committed V1 emitter WASM is used only to create the isolated localnet legacy fixture; public testnet resolves and verifies the emitter already administering BLND. Locally built Comet and test-oracle WASMs must also match their designated hashes.
 
 ```sh
 make build
@@ -55,21 +40,30 @@ make localnet-plan
 make testnet-plan
 ```
 
-After a verified testnet deployment, run one keeper pass or the scheduled
-loop with:
+Public testnet cannot mint BLND. The 600 BLND and 6 existing TestnetV2 USDC used to initialize the new Comet must come from the configured wallet. Its signing identity is configured with `BLEND_V21_WALLET_CONFIG_DIR` and `BLEND_V21_WALLET_IDENTITY`; the BLND source aliases default to the same identity.
+
+Deploy the unfunded candidate:
 
 ```sh
+make testnet-deploy
+```
+
+Do not start the keeper until the backstop has been funded and the pool has been separately activated and enrolled in the reward zone. Once activation succeeds, run the keeper throughout the pre-swap period so legacy backfill is checkpointed and allocated:
+
+```sh
+make testnet-activate-pool
 make testnet-keeper-once
 make testnet-keeper
 ```
 
-Optionally set the dedicated BLNT issuer's metadata domain before its key is
-permanently locked:
+Keep the scheduled keeper running throughout the pre-swap period. Immediately before `swap_backstop`, stop the scheduled keeper and run one final `make testnet-keeper-once` checkpoint. After the normal emitter swap to the deployed V2.1 backstop has completed, finalize the one-time legacy-emissions backfill and restart the keeper in normal-emissions mode:
 
 ```sh
-BLEND_BLNT_HOME_DOMAIN=blnd.trade make testnet-deploy
+make testnet-enable-emissions
+make testnet-keeper-once
+make testnet-keeper
 ```
 
-See [the system specification](docs/SYSTEM_SPEC.md) and
-[deployment runbook](docs/DEPLOYMENT.md) before running a mutating deployment
-command.
+`enable-emissions` is retry-safe: it accepts an already-completed drop or distribution transition and does not assume it is the first caller.
+
+See [the system specification](docs/SYSTEM_SPEC.md) and [deployment runbook](docs/DEPLOYMENT.md) before running a mutating deployment command.

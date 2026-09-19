@@ -1,22 +1,20 @@
 V2_DIR := blend-contracts-v2
-BACKFILL_DIR := blnt-backfill-contract
 COMET_DIR := comet-contracts-v1.1
 ORACLE_DIR := test-sep40-oracle
 
 .PHONY: build test localnet-plan localnet-validate localnet-start localnet-deploy \
 	localnet-run localnet-status localnet-stop testnet-plan testnet-validate \
-	testnet-start testnet-deploy testnet-resume testnet-run testnet-status testnet-keeper-plan \
-	testnet-keeper-once testnet-keeper
+	testnet-start testnet-deploy testnet-enable-emissions testnet-run testnet-status \
+	testnet-resume testnet-activate-pool testnet-keeper-plan testnet-keeper-once \
+	testnet-keeper localnet-activate-pool localnet-enable-emissions
 
 build:
 	bash scripts/build-v2.sh
-	$(MAKE) -C $(BACKFILL_DIR) build
 	$(MAKE) -C $(COMET_DIR) build
 	$(MAKE) -C $(ORACLE_DIR) build
 
 test: build
 	cd $(V2_DIR) && cargo test --all --tests --locked
-	$(MAKE) -C $(BACKFILL_DIR) test
 	$(MAKE) -C $(COMET_DIR) test
 	$(MAKE) -C $(ORACLE_DIR) test
 
@@ -38,6 +36,12 @@ localnet-run:
 localnet-status:
 	bash scripts/deploy-v2.1.sh status
 
+localnet-activate-pool:
+	bash scripts/deploy-v2.1.sh activate-pool
+
+localnet-enable-emissions:
+	bash scripts/deploy-v2.1.sh enable-emissions
+
 localnet-stop:
 	bash scripts/deploy-v2.1.sh stop
 
@@ -55,6 +59,12 @@ testnet-deploy:
 
 testnet-resume:
 	BLEND_V21_NETWORK=testnet bash scripts/deploy-v2.1.sh resume
+
+testnet-activate-pool:
+	BLEND_V21_NETWORK=testnet bash scripts/deploy-v2.1.sh activate-pool
+
+testnet-enable-emissions:
+	BLEND_V21_NETWORK=testnet bash scripts/deploy-v2.1.sh enable-emissions
 
 testnet-run:
 	BLEND_V21_NETWORK=testnet bash scripts/deploy-v2.1.sh run

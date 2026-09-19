@@ -12,6 +12,7 @@ INCLUSION_FEE="${BLEND_V21_KEEPER_INCLUSION_FEE:-10000}"
 STOP_REQUESTED=0
 SLEEP_PID=""
 EXPECTED_ERROR_CODE=""
+EMISSIONS_ENABLED=false
 
 usage() {
     cat <<'EOF'
@@ -19,12 +20,14 @@ Usage: scripts/emissions-keeper.sh COMMAND
 
 Commands:
   plan  Simulate one keeper pass without mutation.
-  once  Refresh the oracle and submit one keeper pass.
+  once  Submit one keeper pass (and refresh only a local fixture oracle).
   run   Run one pass immediately, then repeat every hour by default.
 
-The keeper verifies that the saved V1 emitter targets the saved V2 backstop,
-refreshes the authenticated test fixture oracle on every pass, advances the
-emitter, checkpoints backstop emissions, and gulps the Fixed Pool emissions.
+The keeper reuses TestnetV2's externally maintained oracle on public testnet
+and refreshes only the locally deployed fixture oracle.
+Before the normal emitter upgrade it advances V2 legacy backfill accounting
+without calling the incumbent emitter. After enable-emissions completes the
+backfill drop, it advances normal emitter, backstop, and pool emissions.
 EOF
 }
 
@@ -116,56 +119,91 @@ run_call() {
 
 refresh_oracle() {
     local oracle
-    oracle="$(state_value fixed_pool_oracle)"
-    keeper_note "Refreshing Fixed oracle price histories."
-    seed_fixed_oracle "${oracle}"
+    oracle="$(state_value pool_oracle)"
+    if [[ "${NETWORK_MODE}" == "testnet" ]]; then
+        keeper_note "Reusing externally maintained TestnetV2 oracle ${oracle}."
+        return
+    fi
+    keeper_note "Refreshing local TestnetV2.1 oracle price histories."
+    seed_modeled_oracle "${oracle}"
 }
 
 load_keeper_configuration() {
-    local emitter backstop pool recipient reward
+    local emitter backstop pool initial_recipient recipient reward
     validate_runtime_tools
     require_network
     load_state
     assert_equal "verified" "$(state_value phase)" "deployment phase"
     emitter="$(state_value emitter)"
     backstop="$(state_value backstop)"
-    pool="$(state_value fixed_pool)"
+    pool="$(state_value pool)"
+    initial_recipient="$(state_value emitter_initial_backstop)"
     require_contract_id "${emitter}" "emitter"
     require_contract_id "${backstop}" "backstop"
-    require_contract_id "${pool}" "Fixed Pool"
+    require_contract_id "${pool}" "TestnetV2.1 pool"
+    assert_equal "true" "$(state_value backfill_enabled)" \
+        "V2.1 legacy backfill activation"
+    EMISSIONS_ENABLED="$(state_optional emissions_enabled)"
+    EMISSIONS_ENABLED="${EMISSIONS_ENABLED:-false}"
     recipient="$(normalize_scalar "$(invoke_view \
         "keeper-query-emitter-backstop" "${emitter}" get_backstop)")"
-    assert_equal "${backstop}" "${recipient}" "emitter recipient"
+    if [[ "${EMISSIONS_ENABLED}" == "true" ]]; then
+        assert_equal "${backstop}" "${recipient}" "emitter recipient"
+    elif [[ "${recipient}" == "${backstop}" ]]; then
+        die "emitter swap is complete; run enable-emissions before restarting the keeper"
+    else
+        assert_equal "${initial_recipient}" "${recipient}" \
+            "pre-upgrade emitter recipient"
+    fi
     reward="$(invoke_view "keeper-query-reward-zone" "${backstop}" reward_zone)"
     printf '%s' "${reward}" | jq -e --arg pool "${pool}" \
-        'index($pool) != null' >/dev/null || die "Fixed Pool is absent from reward zone"
+        'length == 1 and .[0] == $pool' >/dev/null ||
+        die "TestnetV2.1 is not the sole reward-zone member"
 }
 
 plan_pass() {
     local emitter backstop pool
+    load_keeper_configuration
     emitter="$(state_value emitter)"
     backstop="$(state_value backstop)"
-    pool="$(state_value fixed_pool)"
-    keeper_note "Fixed oracle price histories would be refreshed before emissions."
-    plan_call "advance V1 emitter" "${emitter}" distribute
+    pool="$(state_value pool)"
+    if [[ "${NETWORK_MODE}" == "testnet" ]]; then
+        keeper_note "The external TestnetV2 oracle would be reused without mutation."
+    else
+        keeper_note "Local TestnetV2.1 oracle price histories would be refreshed."
+    fi
+    if [[ "${EMISSIONS_ENABLED}" == "true" ]]; then
+        plan_call "advance V1 emitter" "${emitter}" distribute
+    else
+        keeper_note "V1 emitter would not be called before the backstop swap."
+    fi
     plan_call "checkpoint V2.1 backstop" "${backstop}" distribute 1000 1010
-    plan_call "gulp Fixed Pool emissions" "${pool}" gulp_emissions 1000 1200
+    plan_call "gulp TestnetV2.1 emissions" "${pool}" gulp_emissions 1000 1200
 }
 
 run_pass() {
     local emitter backstop pool failed=0
+    load_keeper_configuration
     emitter="$(state_value emitter)"
     backstop="$(state_value backstop)"
-    pool="$(state_value fixed_pool)"
+    pool="$(state_value pool)"
     if ! refresh_oracle; then
         keeper_note "Fixed oracle refresh failed; skipping emissions processing for this pass."
         return 1
     fi
-    run_call "advance V1 emitter" "${emitter}" distribute || failed=1
+    if [[ "${EMISSIONS_ENABLED}" == "true" ]]; then
+        run_call "advance V1 emitter" "${emitter}" distribute || failed=1
+    else
+        keeper_note "Skipping the incumbent V1 emitter during legacy backfill."
+    fi
     run_call "checkpoint V2.1 backstop" "${backstop}" distribute 1000 1010 || failed=1
-    run_call "gulp Fixed Pool emissions" "${pool}" gulp_emissions 1000 1200 || failed=1
+    run_call "gulp TestnetV2.1 emissions" "${pool}" gulp_emissions 1000 1200 || failed=1
     (( failed == 0 )) || return 1
-    keeper_note "Keeper pass completed successfully."
+    if [[ "${EMISSIONS_ENABLED}" == "true" ]]; then
+        keeper_note "Normal emissions keeper pass completed successfully."
+    else
+        keeper_note "Legacy backfill keeper pass completed successfully."
+    fi
 }
 
 request_stop() {
@@ -176,7 +214,7 @@ request_stop() {
 run_forever() {
     local pass=0
     trap request_stop INT TERM
-    keeper_note "Keeper started; pass interval is ${INTERVAL_SECONDS}s and the oracle is refreshed on every pass."
+    keeper_note "Keeper started; pass interval is ${INTERVAL_SECONDS}s."
     while (( STOP_REQUESTED == 0 )); do
         pass=$((pass + 1))
         keeper_note "Beginning scheduled pass ${pass}."
@@ -199,7 +237,6 @@ main() {
     require_positive_integer "${INTERVAL_SECONDS}" "keeper interval"
     require_positive_integer "${INCLUSION_FEE}" "keeper inclusion fee"
     export STELLAR_INCLUSION_FEE="${INCLUSION_FEE}"
-    load_keeper_configuration
     case "$1" in
         plan) plan_pass ;;
         once) run_pass ;;
