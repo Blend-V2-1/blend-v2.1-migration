@@ -63,7 +63,9 @@ The initial deployment MUST NOT start legacy-emissions accounting. After the use
 - run the keeper to advance `backstop.distribute` and `pool.gulp_emissions` without mutating the reused oracle; and
 - omit `emitter.distribute`, `emitter.drop`, and `backstop.drop`.
 
-This is the unchanged V2 backfill mechanism, not an incident-remediation token backfill. After activation it accrues one BLND per second up to the contract's 10,000,000 BLND cap while the emitter does not recognize V2.1. TestnetV2.1 participants before the swap MUST remain eligible for their share. The accounting is allocated through the backstop and pool, but the BLND is not minted into V2.1 until the post-swap `backstop.drop` succeeds.
+This is the unchanged V2 backfill mechanism, not an incident-remediation token backfill. After activation it accrues one BLND per second up to the contract's 10 million BLND cap while the emitter does not recognize V2.1. TestnetV2.1 participants before the swap MUST remain eligible for their share. The accounting is allocated through the backstop and pool, but the BLND is not minted into V2.1 until the post-swap `backstop.drop` succeeds.
+
+V2.1 MUST NOT receive any other one-time BLND allocation. The emitter swap itself MUST NOT mint or allocate BLND to V2.1. The only permitted one-time BLND mint for V2.1 is the unchanged post-swap legacy-emissions `backstop.drop`, which MUST mint exactly the accrued backfill amount, MUST NOT exceed 10 million BLND, and MUST include no legacy drop-list allocation. Normal ongoing BLND emissions after the swap are separate from this one-time backfill mint.
 
 ## Normal emitter upgrade and emissions activation
 
