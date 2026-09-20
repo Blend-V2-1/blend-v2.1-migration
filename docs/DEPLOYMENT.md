@@ -1,6 +1,6 @@
 # Blend v2.1 deployment runbook
 
-The deployment runner uses the same ordered, evidence-producing pattern as the V3 migration runner while retaining the existing BLND asset and V1 emitter.
+The deployment runner follows an ordered, evidence-producing workflow while retaining the existing BLND asset and V1 emitter.
 
 ## Toolchains
 
