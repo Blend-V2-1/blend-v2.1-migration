@@ -6,13 +6,13 @@ The deployment runner follows an ordered, evidence-producing workflow while reta
 
 - `blend-contracts`: the exact committed V1 emitter WASM, used only for the isolated localnet legacy fixture.
 - `blend-contracts-v2`: the official V2.0.0 backstop, pool-factory, and pool release WASMs built with Stellar CLI 22.0.1. The runner downloads and verifies their fixed SHA-256 hashes instead of rebuilding them. Rust 1.81.0 is needed only when running the upstream V2 source tests through `make test`.
-- `comet-contracts-v1.1`: its pinned Rust 1.92.0 / SDK 25 toolchain.
+- `comet-contracts-v1.1`: the official `v1.1.0_contracts_pkg1.0.0_cli25.1.0` pool release WASM. The source checkout remains pinned for review and source tests; it is not rebuilt for deployment.
 - `test-sep40-oracle`: its pinned Rust 1.91.1 / SDK 27 toolchain, used only by the localnet mirror. Public testnet reuses TestnetV2's existing oracle.
 - deployment and verification: Stellar CLI major version 27.
 
-Verified V2 artifacts are cached below ignored `.artifacts/`. A valid cached copy can be reused offline; an absent or invalid copy is downloaded again and must pass hash verification before replacing the cache.
+Verified V2 and Comet release artifacts are cached below ignored `.artifacts/`. A valid cached copy can be reused offline; an absent or invalid copy is downloaded again and must pass hash verification before replacing the cache.
 
-The runner also fixes designated hashes for the locally built Comet and test-oracle WASMs. Localnet and testnet runs may use uncommitted migration-runner changes, but every deployed contract artifact must match its designated hash.
+The runner also fetches and fixes the designated hash for the official Comet V1.1 release WASM, plus the designated hash for the locally built test-oracle WASM. Localnet and testnet runs may use uncommitted migration-runner changes, but every deployed contract artifact must match its designated hash.
 
 ## Launch topology
 

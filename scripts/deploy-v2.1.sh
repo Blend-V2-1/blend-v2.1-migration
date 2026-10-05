@@ -81,8 +81,10 @@ V2_BACKSTOP_RELEASE="v2.0.0_backstop_cli22.0.1"
 V2_POOL_WASM="${V2_ARTIFACT_DIR}/pool.wasm"
 V2_POOL_SHA256="a41fc53d6753b6c04eb15b021c55052366a4c8e0e21bc72700f461264ec1350e"
 V2_POOL_RELEASE="v2.0.0_pool_cli22.0.1"
-COMET_WASM="${COMET_DIR}/target/wasm32v1-none/optimized/comet.wasm"
-COMET_WASM_SHA256="7613f207c48f69c0299da2cb4a7a2946bbac7479ffcbeb7e428aa1d4ee37d113"
+COMET_ARTIFACT_DIR="${ROOT_DIR}/.artifacts/comet-contracts-v1/v1.1.0-contracts-pkg1.0.0-cli25.1.0"
+COMET_WASM="${COMET_ARTIFACT_DIR}/comet.wasm"
+COMET_WASM_SHA256="d735c3395f59510172cf5cf838823a1389b97cfec6bf24e580e9bd77d2b3e687"
+COMET_RELEASE="v1.1.0_contracts_pkg1.0.0_cli25.1.0"
 ORACLE_DIR="${ROOT_DIR}/test-sep40-oracle"
 ORACLE_WASM="${ORACLE_DIR}/target/wasm32v1-none/optimized/blend_v21_test_sep40_oracle.wasm"
 ORACLE_WASM_SHA256="d60558a660250bc6c1dc318c0e0f4e0d1ec42ab84341c92d465a0bb378daf262"
@@ -215,7 +217,7 @@ validate_testnet_v2_fixture() {
 }
 
 build_artifacts() {
-    note "Fetching official V2 artifacts and building Comet v1.1 and the test oracle..."
+    note "Fetching official V2 and Comet v1.1 release artifacts and building the test oracle..."
     make -C "${ROOT_DIR}" build
 }
 
@@ -415,6 +417,7 @@ record_deployment_inputs() {
     state_record "v2_pool_wasm_sha256" "$(sha256_file "${V2_POOL_WASM}")"
     state_record "v2_pool_release" "${V2_POOL_RELEASE}"
     state_record "comet_v11_wasm_sha256" "$(sha256_file "${COMET_WASM}")"
+    state_record "comet_v11_release" "${COMET_RELEASE}"
     state_record "local_oracle_wasm_sha256" "$(sha256_file "${ORACLE_WASM}")"
     state_record "testnet_v2_fixture_sha256" "$(sha256_file "${TESTNET_V2_FIXTURE}")"
     state_record "comet_initial_blnd" "${COMET_BLND_BALANCE}"
@@ -1271,8 +1274,8 @@ command_plan() {
     cat <<EOF
 Blend v2.1 ${NETWORK_LABEL} deployment
 
-  1. Fetch and hash-check the official unchanged V2.0.0 release WASMs and
-     build Comet v1.1 with its pinned toolchain.
+  1. Fetch and hash-check the official unchanged V2.0.0 and Comet v1.1
+     release WASMs.
   2. ${blnd_description}. On testnet, reuse TestnetV2's existing XLM, USDC,
      wETH, and wBTC assets and its existing SEP-40 oracle.
   3. Initialize one seven-decimal 80:20 BLND:USDC Comet v1.1 LP with 600 BLND

@@ -19,9 +19,9 @@ Localnet MAY deploy an isolated BLND and V1-emitter fixture so the public-testne
 
 ## Artifact integrity
 
-The migration repository MUST track V1 and V2 source directly through the `blend-capital/blend-contracts` and `blend-capital/blend-contracts-v2` submodules. The runner MUST verify the committed V1 emitter WASM used by the localnet fixture. It MUST fetch the three official V2.0.0 backstop, pool-factory, and pool release WASMs built with Stellar CLI 22.0.1 and MUST reject artifacts whose SHA-256 differs from the fixed expected hashes. It MUST NOT rebuild those deployment artifacts locally.
+The migration repository MUST track V1 and V2 source directly through the `blend-capital/blend-contracts` and `blend-capital/blend-contracts-v2` submodules. The runner MUST verify the committed V1 emitter WASM used by the localnet fixture. It MUST fetch the three official V2.0.0 backstop, pool-factory, and pool release WASMs built with Stellar CLI 22.0.1, and the official `v1.1.0_contracts_pkg1.0.0_cli25.1.0` Comet pool release WASM. It MUST reject artifacts whose SHA-256 differs from the fixed expected hashes. It MUST NOT rebuild those deployment artifacts locally.
 
-Localnet and public-testnet deployments MAY execute from a modified migration worktree. Worktree cleanliness is not a deployment precondition. The runner MUST reject any Comet or test-oracle build whose SHA-256 differs from its designated hash. No contract WASM with an undesignated hash may be deployed.
+Localnet and public-testnet deployments MAY execute from a modified migration worktree. Worktree cleanliness is not a deployment precondition. The runner MUST reject any Comet release artifact or test-oracle build whose SHA-256 differs from its designated hash. No contract WASM with an undesignated hash may be deployed.
 
 ## Existing BLND and emitter
 

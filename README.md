@@ -32,7 +32,7 @@ Submodule commits are intentionally pinned for reproducibility. Do not use `git 
 
 ## Build and deployment
 
-The unchanged V2 backstop, pool-factory, and pool contracts are fetched from the official V2.0.0 releases and accepted only after fixed SHA-256 verification. The committed V1 emitter WASM is used only to create the isolated localnet legacy fixture; public testnet resolves and verifies the emitter already administering BLND. Locally built Comet and test-oracle WASMs must also match their designated hashes.
+The unchanged V2 backstop, pool-factory, and pool contracts, plus the Comet V1.1 pool contract, are fetched from their official releases and accepted only after fixed SHA-256 verification. The committed V1 emitter WASM is used only to create the isolated localnet legacy fixture; public testnet resolves and verifies the emitter already administering BLND. The locally built test-oracle WASM must match its designated hash.
 
 ```sh
 make build

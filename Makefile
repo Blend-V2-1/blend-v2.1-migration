@@ -10,7 +10,6 @@ ORACLE_DIR := test-sep40-oracle
 
 build:
 	bash scripts/build-v2.sh
-	$(MAKE) -C $(COMET_DIR) build
 	$(MAKE) -C $(ORACLE_DIR) build
 
 test: build
