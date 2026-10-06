@@ -6,7 +6,9 @@ ORACLE_DIR := test-sep40-oracle
 	localnet-run localnet-status localnet-stop testnet-plan testnet-validate \
 	testnet-start testnet-deploy testnet-enable-emissions testnet-run testnet-status \
 	testnet-resume testnet-activate-pool testnet-keeper-plan testnet-keeper-once \
-	testnet-keeper localnet-activate-pool localnet-enable-emissions
+	testnet-keeper localnet-activate-pool localnet-enable-emissions \
+	mainnet-keeper-plan mainnet-keeper-once mainnet-keeper mainnet-keeper-status \
+	mainnet-keeper-stop
 
 build:
 	bash scripts/build-v2.sh
@@ -79,3 +81,18 @@ testnet-keeper-once:
 
 testnet-keeper:
 	BLEND_V21_NETWORK=testnet bash scripts/emissions-keeper.sh run
+
+mainnet-keeper-plan:
+	bash scripts/mainnet-emissions-keeper.sh plan
+
+mainnet-keeper-once:
+	bash scripts/mainnet-emissions-keeper.sh once
+
+mainnet-keeper:
+	bash scripts/mainnet-emissions-keeper.sh run
+
+mainnet-keeper-status:
+	bash scripts/mainnet-emissions-keeper.sh status
+
+mainnet-keeper-stop:
+	bash scripts/mainnet-emissions-keeper.sh stop

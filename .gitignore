@@ -1,5 +1,6 @@
 .artifacts/
 .localnet/
+.mainnet/
 .testnet/
 /test-sep40-oracle/target/
 /test-sep40-oracle/test_snapshots/
